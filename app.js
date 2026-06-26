@@ -6,10 +6,8 @@
 // only to generate a SHA-1 signature client-side via Web Crypto).
 // ============================================================
 
-const CLOUDINARY_CLOUD_NAME = "dz0zmxkbu";
-const CLOUDINARY_API_KEY    = "373228284253249";
-const CLOUDINARY_API_SECRET = "orkon2ybXvI5H4LcGPG9PlKSOXs";
-const CLOUDINARY_UPLOAD_PRESET = "ml_default"; // unsigned preset fallback
+const CLOUDINARY_CLOUD_NAME   = "dz0zmxkbu";
+const CLOUDINARY_UPLOAD_PRESET = "ml_default"; // unsigned preset — no secret needed
 
 // ──────────────────────────────────────────────────────────────
 // 1. STATIC RESOURCES DATABASE
@@ -275,31 +273,14 @@ let currentPatientSearch = "";
 // ──────────────────────────────────────────────────────────────
 
 /**
- * Generate SHA-1 hex string via SubtleCrypto (no server needed).
- */
-async function sha1(message) {
-    const msgBuffer = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest("SHA-1", msgBuffer);
-    return Array.from(new Uint8Array(hashBuffer))
-        .map(b => b.toString(16).padStart(2, "0"))
-        .join("");
-}
-
-/**
- * Upload a File object to Cloudinary using a signed request.
- * Returns the secure URL of the uploaded image.
+ * Upload a File object to Cloudinary using an UNSIGNED upload preset.
+ * No server or API secret needed — safe for static/public sites.
  */
 async function uploadToCloudinary(file, folder = "venezuela_ayuda") {
-    const timestamp = Math.round(Date.now() / 1000);
-    const paramsToSign = `folder=${folder}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
-    const signature   = await sha1(paramsToSign);
-
     const formData = new FormData();
-    formData.append("file",      file);
-    formData.append("api_key",   CLOUDINARY_API_KEY);
-    formData.append("timestamp", timestamp);
-    formData.append("signature", signature);
-    formData.append("folder",    folder);
+    formData.append("file",           file);
+    formData.append("upload_preset",  CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder",         folder);
 
     const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
     const res  = await fetch(endpoint, { method: "POST", body: formData });
@@ -319,7 +300,14 @@ const GALLERY_STORAGE_KEY = "ve_earthquake_gallery";
 function loadGallery() {
     try {
         const stored = JSON.parse(localStorage.getItem(GALLERY_STORAGE_KEY) || "[]");
-        return [...stored, ...STATIC_GALLERY];
+        // Deduplicate by id in case of double-save
+        const allItems = [...stored, ...STATIC_GALLERY];
+        const seen = new Set();
+        return allItems.filter(item => {
+            if (seen.has(item.id)) return false;
+            seen.add(item.id);
+            return true;
+        });
     } catch {
         return [...STATIC_GALLERY];
     }
@@ -470,22 +458,57 @@ function renderGallery(items) {
     const grid = document.getElementById("gallery-grid");
     if (!grid) return;
     grid.innerHTML = "";
+
+    const userUploaded = JSON.parse(localStorage.getItem(GALLERY_STORAGE_KEY) || "[]");
+    const userIds = new Set(userUploaded.map(i => i.id));
+
+    if (!items.length) {
+        grid.innerHTML = `<p style="color:var(--text-muted);text-align:center;padding:3rem 1rem;grid-column:1/-1">No hay imágenes en la galería.</p>`;
+        return;
+    }
+
     items.forEach(item => {
         const card = document.createElement("div");
         card.className = "gallery-card";
+        card.dataset.id = item.id;
+
+        const isUserItem = userIds.has(item.id);
+        const deleteBtn = isUserItem
+            ? `<button class="gallery-delete-btn" data-id="${item.id}" title="Eliminar imagen" onclick="deleteGalleryItem('${item.id}',event)">
+                   <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4h6v2"></path></svg>
+               </button>`
+            : "";
+
         card.innerHTML = `
             <div class="gallery-card-img-wrapper">
                 <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.title)}"
-                     onerror="this.src='https://placehold.co/600x800/0f172a/94a3b8?text=Comunicado'">
+                     loading="lazy"
+                     onerror="this.src='https://placehold.co/600x400/0f172a/94a3b8?text=Comunicado'">
+                ${deleteBtn}
             </div>
             <div class="gallery-card-info">
                 <h3 class="gallery-card-title">${escapeHTML(item.title)}</h3>
-                <p class="gallery-card-desc">${escapeHTML(item.desc)}</p>
-                <span class="gallery-card-meta">${escapeHTML(item.date)}</span>
+                ${item.desc ? `<p class="gallery-card-desc">${escapeHTML(item.desc)}</p>` : ""}
+                <span class="gallery-card-meta">${escapeHTML(item.date || "")}</span>
             </div>`;
-        card.addEventListener("click", () => openLightbox(item.image, item.title));
+        card.addEventListener("click", (e) => {
+            if (e.target.closest(".gallery-delete-btn")) return;
+            openLightbox(item.image, item.title);
+        });
         grid.appendChild(card);
     });
+}
+
+function deleteGalleryItem(id, e) {
+    e.stopPropagation();
+    if (!confirm("\u00bfEliminar esta imagen de la galería?")) return;
+    try {
+        let stored = JSON.parse(localStorage.getItem(GALLERY_STORAGE_KEY) || "[]");
+        stored = stored.filter(i => i.id !== id);
+        localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(stored));
+        renderGallery(loadGallery());
+        showToast("Imagen eliminada de la galería");
+    } catch { /* ignore */ }
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -569,6 +592,22 @@ function setupEventListeners() {
         });
     });
 
+    // ── ESC key closes any open modal ──
+    document.addEventListener("keydown", function(e) {
+        if (e.key !== "Escape") return;
+        if (document.getElementById("suggest-modal").classList.contains("open")) {
+            document.getElementById("suggest-modal").classList.remove("open");
+            document.body.style.overflow = "";
+        }
+        if (document.getElementById("gallery-upload-modal").classList.contains("open")) {
+            document.getElementById("gallery-upload-modal").classList.remove("open");
+            document.body.style.overflow = "";
+        }
+        if (document.getElementById("lightbox-modal").classList.contains("open")) {
+            closeLightbox();
+        }
+    });
+
     // ── Lightbox ──
     document.getElementById("close-lightbox").addEventListener("click", closeLightbox);
     document.getElementById("lightbox-modal").addEventListener("click", function(e) {
@@ -638,10 +677,11 @@ function setupEventListeners() {
         if (e.target === this) { this.classList.remove("open"); document.body.style.overflow = ""; }
     });
 
-    // ── Image preview in modal ──
+    // ── Image preview in the suggest modal ──
     const imgFileInput  = document.getElementById("link-image-file");
     const imgPreview    = document.getElementById("img-preview");
     const imgPreviewWrap= document.getElementById("img-preview-wrapper");
+    const uploadDropArea= document.getElementById("upload-drop-area");
     const uploadStatus  = document.getElementById("upload-status");
 
     if (imgFileInput) {
@@ -652,6 +692,7 @@ function setupEventListeners() {
             reader.onload = e => {
                 imgPreview.src = e.target.result;
                 imgPreviewWrap.style.display = "block";
+                if (uploadDropArea) uploadDropArea.style.display = "none";
             };
             reader.readAsDataURL(file);
         });
@@ -667,29 +708,28 @@ function setupEventListeners() {
         const location   = document.getElementById("link-location").value.trim() || "Nacional";
         const url        = document.getElementById("link-url").value.trim();
         const desc       = document.getElementById("link-desc").value.trim();
-        const manualImg  = document.getElementById("link-image").value.trim();
         const fileInput  = document.getElementById("link-image-file");
         const file       = fileInput?.files[0];
 
         // Determine add-to-gallery flag
         const addToGallery = document.getElementById("add-to-gallery")?.checked;
 
-        let imageUrl = manualImg;
+        let imageUrl = "";
 
         if (file) {
             submitBtn.disabled = true;
-            submitBtn.textContent = "Subiendo imagen...";
+            submitBtn.querySelector("span").textContent = "Subiendo imagen...";
             if (uploadStatus) { uploadStatus.textContent = "Subiendo a Cloudinary..."; uploadStatus.style.color = "#94a3b8"; }
 
             try {
                 imageUrl = await uploadToCloudinary(file);
-                if (uploadStatus) { uploadStatus.textContent = "Imagen subida exitosamente."; uploadStatus.style.color = "#34d399"; }
+                if (uploadStatus) { uploadStatus.textContent = "Imagen subida correctamente."; uploadStatus.style.color = "#34d399"; }
                 showToast("Imagen subida a Cloudinary correctamente");
             } catch (err) {
                 if (uploadStatus) { uploadStatus.textContent = "Error: " + err.message; uploadStatus.style.color = "#ef4444"; }
                 showToast("Error al subir la imagen: " + err.message, "error");
                 submitBtn.disabled = false;
-                submitBtn.textContent = "Agregar Recurso";
+                submitBtn.querySelector("span").textContent = "Agregar Enlace";
                 return;
             }
         }
@@ -719,15 +759,97 @@ function setupEventListeners() {
         loadResources();
         filterItems();
 
-        showToast("Recurso agregado correctamente");
+        showToast("Enlace agregado correctamente");
 
         document.getElementById("suggest-modal").classList.remove("open");
         document.body.style.overflow = "";
         this.reset();
         if (imgPreviewWrap) imgPreviewWrap.style.display = "none";
+        if (uploadDropArea) uploadDropArea.style.display = "flex";
         if (uploadStatus)   uploadStatus.textContent = "";
         submitBtn.disabled = false;
-        submitBtn.textContent = "Agregar Recurso";
+        submitBtn.querySelector("span").textContent = "Agregar Enlace";
+    });
+
+    // ── Gallery upload modal ──
+    const galleryUploadModal = document.getElementById("gallery-upload-modal");
+    const galleryFileInput   = document.getElementById("gallery-file-input");
+    const galleryPreview     = document.getElementById("gallery-preview");
+    const galleryPreviewWrap = document.getElementById("gallery-preview-wrapper");
+    const galleryDropArea    = document.getElementById("gallery-drop-area");
+    const galleryStatus      = document.getElementById("gallery-upload-status");
+
+    document.getElementById("open-gallery-upload").addEventListener("click", () => {
+        galleryUploadModal.classList.add("open");
+        document.body.style.overflow = "hidden";
+    });
+
+    function closeGalleryModal() {
+        galleryUploadModal.classList.remove("open");
+        document.body.style.overflow = "";
+    }
+    document.getElementById("close-gallery-modal").addEventListener("click", closeGalleryModal);
+    galleryUploadModal.addEventListener("click", function(e) {
+        if (e.target === this) closeGalleryModal();
+    });
+
+    // Preview selected image
+    if (galleryFileInput) {
+        galleryFileInput.addEventListener("change", function() {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                galleryPreview.src = e.target.result;
+                galleryPreviewWrap.style.display = "block";
+                if (galleryDropArea) galleryDropArea.style.display = "none";
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Submit gallery upload form
+    document.getElementById("gallery-upload-form").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const submitBtn = document.getElementById("gallery-upload-btn");
+        const title     = document.getElementById("gallery-img-title").value.trim();
+        const file      = galleryFileInput?.files[0];
+
+        if (!file) {
+            showToast("Por favor selecciona una imagen", "error");
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.querySelector("span").textContent = "Subiendo...";
+        if (galleryStatus) { galleryStatus.textContent = "Subiendo a Cloudinary..."; galleryStatus.style.color = "#94a3b8"; }
+
+        try {
+            const imageUrl = await uploadToCloudinary(file, "venezuela_ayuda_gallery");
+            if (galleryStatus) { galleryStatus.textContent = "Imagen subida correctamente."; galleryStatus.style.color = "#34d399"; }
+
+            const galleryItem = {
+                id: "u" + Date.now(),
+                title,
+                desc: "",
+                image: imageUrl,
+                date: new Date().toLocaleDateString("es-VE", { year:"numeric", month:"long", day:"numeric" })
+            };
+            saveGalleryItem(galleryItem);
+            renderGallery(loadGallery());
+            showToast("Imagen agregada a la galería correctamente");
+            closeGalleryModal();
+            this.reset();
+            if (galleryPreviewWrap) galleryPreviewWrap.style.display = "none";
+            if (galleryDropArea)    galleryDropArea.style.display = "flex";
+            if (galleryStatus)      galleryStatus.textContent = "";
+        } catch (err) {
+            if (galleryStatus) { galleryStatus.textContent = "Error: " + err.message; galleryStatus.style.color = "#ef4444"; }
+            showToast("Error al subir la imagen: " + err.message, "error");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.querySelector("span").textContent = "Subir a la Galería";
+        }
     });
 }
 

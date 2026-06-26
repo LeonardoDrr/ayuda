@@ -159,9 +159,15 @@
 
         <!-- 2. Galería de Comunicados View -->
         <div id="gallery-view" class="view-container">
-            <div class="view-header">
-                <h2 class="view-title">Galería de Comunicados e Imágenes</h2>
-                <p class="view-subtitle">Consolidado de folletos, avisos oficiales, comunicados de servicios públicos y listas físicas de heridos o refugiados. Haz clic en una imagen para ampliarla.</p>
+            <div class="view-header gallery-view-header">
+                <div>
+                    <h2 class="view-title">Galería de Comunicados e Imágenes</h2>
+                    <p class="view-subtitle">Consolidado de folletos, avisos oficiales, comunicados de servicios públicos y listas físicas de heridos o refugiados. Haz clic en una imagen para ampliarla.</p>
+                </div>
+                <button id="open-gallery-upload" class="btn-gallery-upload">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span>Subir imagen</span>
+                </button>
             </div>
             <div class="gallery-grid" id="gallery-grid">
                 <!-- Dynamically injected via JS -->
@@ -211,17 +217,16 @@
         </div>
     </div>
 
-    <!-- Suggest/Add Link Modal — with Cloudinary upload -->
+    <!-- Suggest/Add Link Modal —  simplified -->
     <div class="modal-overlay" id="suggest-modal">
         <div class="modal-card">
             <div class="modal-header">
-                <h2>Agregar Recurso de Ayuda</h2>
+                <h2>Agregar Enlace de Ayuda</h2>
                 <button class="close-modal-btn" id="close-modal">
                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
             <div class="modal-body">
-                <p class="modal-intro">Completa el formulario para agregar un nuevo enlace o comunicado de ayuda. Puedes subir una imagen directamente desde tu dispositivo — se almacena en la nube de forma automática.</p>
                 <form id="suggest-form" autocomplete="off">
                     <div class="form-group">
                         <label for="link-title">Nombre del Recurso / Sitio Web *</label>
@@ -238,7 +243,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="link-location">Ubicación / Cobertura</label>
+                            <label for="link-location">Ubicación <span style="font-weight:400;opacity:.7">(opcional)</span></label>
                             <input type="text" id="link-location" placeholder="Ej: Nacional, Caracas, Yaracuy">
                         </div>
                     </div>
@@ -247,37 +252,27 @@
                         <input type="url" id="link-url" required placeholder="https://example.com/ayuda">
                     </div>
                     <div class="form-group">
-                        <label for="link-desc">Descripción Breve *</label>
-                        <textarea id="link-desc" required rows="3" placeholder="Describe brevemente qué información ofrece y cómo ayuda a la población."></textarea>
+                        <label for="link-desc">Descripción <span style="font-weight:400;opacity:.7">(opcional)</span></label>
+                        <textarea id="link-desc" rows="2" placeholder="Describe brevemente qué información ofrece."></textarea>
                     </div>
 
                     <!-- IMAGE SECTION -->
                     <div class="form-group">
-                        <label>Imagen del Comunicado / Folleto</label>
-                        <div class="image-upload-box" id="image-upload-box">
-                            <input type="file" id="link-image-file" accept="image/*" style="display:none">
-                            <div class="upload-drop-area" id="upload-drop-area">
-                                <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);margin-bottom:.5rem"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                                <p style="font-size:.85rem;color:var(--text-secondary);margin:0">Arrastra una imagen aquí o</p>
-                                <button type="button" class="btn-secondary" style="margin-top:.5rem;font-size:.8rem"
-                                        onclick="document.getElementById('link-image-file').click()">
-                                    Seleccionar archivo
-                                </button>
-                            </div>
-                            <div id="img-preview-wrapper" style="display:none;margin-top:.75rem;text-align:center">
-                                <img id="img-preview" src="" alt="Vista previa"
-                                     style="max-width:100%;max-height:200px;border-radius:.5rem;border:1px solid var(--border-color)">
-                                <button type="button" class="btn-secondary" style="margin-top:.5rem;font-size:.75rem"
-                                        onclick="document.getElementById('link-image-file').value='';document.getElementById('img-preview-wrapper').style.display='none'">
-                                    Quitar imagen
-                                </button>
-                            </div>
-                            <span id="upload-status" style="font-size:.8rem;color:var(--text-muted);display:block;margin-top:.5rem"></span>
+                        <label>Imagen <span style="font-weight:400;opacity:.7">(opcional)</span></label>
+                        <input type="file" id="link-image-file" accept="image/*" style="display:none">
+                        <div class="upload-drop-area" id="upload-drop-area" onclick="document.getElementById('link-image-file').click()" style="cursor:pointer">
+                            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);margin-bottom:.4rem"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <p style="font-size:.85rem;color:var(--text-secondary);margin:0">Haz clic para seleccionar una imagen</p>
                         </div>
-                        <p style="font-size:.75rem;color:var(--text-muted);margin-top:.5rem">
-                            O introduce una URL de imagen externa:
-                        </p>
-                        <input type="url" id="link-image" placeholder="https://raw.githubusercontent.com/.../imagen.png">
+                        <div id="img-preview-wrapper" style="display:none;margin-top:.75rem;text-align:center">
+                            <img id="img-preview" src="" alt="Vista previa"
+                                 style="max-width:100%;max-height:180px;border-radius:.5rem;border:1px solid var(--border-color)">
+                            <button type="button" class="btn-secondary" style="margin-top:.5rem;font-size:.75rem"
+                                    onclick="document.getElementById('link-image-file').value='';document.getElementById('img-preview-wrapper').style.display='none';document.getElementById('upload-drop-area').style.display='flex'">
+                                Quitar imagen
+                            </button>
+                        </div>
+                        <span id="upload-status" style="font-size:.8rem;color:var(--text-muted);display:block;margin-top:.4rem"></span>
                     </div>
 
                     <!-- Add to gallery checkbox -->
@@ -290,14 +285,51 @@
 
                     <button type="submit" class="btn-primary btn-full" id="submit-resource-btn">
                         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        <span>Agregar Recurso</span>
+                        <span>Agregar Enlace</span>
                     </button>
                 </form>
+            </div>
+        </div>
+    </div>
 
-                <div class="modal-info-box" style="margin-top:1.5rem">
-                    <h3>Almacenamiento de Imágenes</h3>
-                    <p>Las imágenes se suben automáticamente a Cloudinary y quedan disponibles de forma permanente en el portal para todos los usuarios.</p>
-                </div>
+    <!-- Gallery Upload Modal — simple: image + title only -->
+    <div class="modal-overlay" id="gallery-upload-modal">
+        <div class="modal-card" style="max-width:440px">
+            <div class="modal-header">
+                <h2>Subir Imagen</h2>
+                <button class="close-modal-btn" id="close-gallery-modal">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="gallery-upload-form" autocomplete="off">
+                    <div class="form-group">
+                        <label for="gallery-img-title">Título de la imagen *</label>
+                        <input type="text" id="gallery-img-title" required placeholder="Ej: Lista de pacientes Hospital XYZ">
+                    </div>
+                    <div class="form-group">
+                        <label>Imagen *</label>
+                        <input type="file" id="gallery-file-input" accept="image/*" style="display:none" required>
+                        <div class="upload-drop-area" id="gallery-drop-area" onclick="document.getElementById('gallery-file-input').click()" style="cursor:pointer">
+                            <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);margin-bottom:.5rem"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <p style="font-size:.9rem;color:var(--text-secondary);margin:0">Haz clic para seleccionar una imagen</p>
+                            <p style="font-size:.75rem;color:var(--text-muted);margin:.25rem 0 0">JPG, PNG, WebP, GIF</p>
+                        </div>
+                        <div id="gallery-preview-wrapper" style="display:none;margin-top:.75rem;text-align:center">
+                            <img id="gallery-preview" src="" alt="Vista previa"
+                                 style="max-width:100%;max-height:200px;border-radius:.5rem;border:1px solid var(--border-color)">
+                            <button type="button" class="btn-secondary" style="margin-top:.5rem;font-size:.75rem"
+                                    onclick="document.getElementById('gallery-file-input').value='';document.getElementById('gallery-preview-wrapper').style.display='none';document.getElementById('gallery-drop-area').style.display='flex'">
+                                Quitar imagen
+                            </button>
+                        </div>
+                        <span id="gallery-upload-status" style="font-size:.8rem;color:var(--text-muted);display:block;margin-top:.4rem"></span>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full" id="gallery-upload-btn">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <span>Subir a la Galería</span>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
