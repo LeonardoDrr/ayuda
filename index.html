@@ -294,7 +294,7 @@
 
     <!-- Gallery Upload Modal — simple: image + title only -->
     <div class="modal-overlay" id="gallery-upload-modal">
-        <div class="modal-card" style="max-width:440px">
+        <div class="modal-card" style="max-width:460px">
             <div class="modal-header">
                 <h2>Subir Imagen</h2>
                 <button class="close-modal-btn" id="close-gallery-modal">
@@ -307,24 +307,52 @@
                         <label for="gallery-img-title">Título de la imagen *</label>
                         <input type="text" id="gallery-img-title" required placeholder="Ej: Lista de pacientes Hospital XYZ">
                     </div>
-                    <div class="form-group">
-                        <label>Imagen *</label>
-                        <input type="file" id="gallery-file-input" accept="image/*" style="display:none" required>
-                        <div class="upload-drop-area" id="gallery-drop-area" onclick="document.getElementById('gallery-file-input').click()" style="cursor:pointer">
-                            <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);margin-bottom:.5rem"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                            <p style="font-size:.9rem;color:var(--text-secondary);margin:0">Haz clic para seleccionar una imagen</p>
-                            <p style="font-size:.75rem;color:var(--text-muted);margin:.25rem 0 0">JPG, PNG, WebP, GIF</p>
-                        </div>
-                        <div id="gallery-preview-wrapper" style="display:none;margin-top:.75rem;text-align:center">
-                            <img id="gallery-preview" src="" alt="Vista previa"
-                                 style="max-width:100%;max-height:200px;border-radius:.5rem;border:1px solid var(--border-color)">
-                            <button type="button" class="btn-secondary" style="margin-top:.5rem;font-size:.75rem"
-                                    onclick="document.getElementById('gallery-file-input').value='';document.getElementById('gallery-preview-wrapper').style.display='none';document.getElementById('gallery-drop-area').style.display='flex'">
-                                Quitar imagen
-                            </button>
-                        </div>
-                        <span id="gallery-upload-status" style="font-size:.8rem;color:var(--text-muted);display:block;margin-top:.4rem"></span>
+
+                    <!-- Toggle tabs: File vs URL -->
+                    <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+                        <button type="button" id="gallery-tab-file" class="btn-secondary" style="flex:1;font-size:.8rem;border-bottom:2px solid var(--color-people)" onclick="switchGalleryTab('file')">
+                            📷 Subir archivo
+                        </button>
+                        <button type="button" id="gallery-tab-url" class="btn-secondary" style="flex:1;font-size:.8rem" onclick="switchGalleryTab('url')">
+                            🔗 Pegar URL
+                        </button>
                     </div>
+
+                    <!-- File upload mode -->
+                    <div id="gallery-mode-file">
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>Imagen (archivo)</label>
+                            <input type="file" id="gallery-file-input" accept="image/*" style="display:none">
+                            <div class="upload-drop-area" id="gallery-drop-area" onclick="document.getElementById('gallery-file-input').click()" style="cursor:pointer">
+                                <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);margin-bottom:.5rem"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                <p style="font-size:.9rem;color:var(--text-secondary);margin:0">Haz clic para seleccionar una imagen</p>
+                                <p style="font-size:.75rem;color:var(--text-muted);margin:.25rem 0 0">JPG, PNG, WebP, GIF &mdash; requiere Cloudinary configurado</p>
+                            </div>
+                            <div id="gallery-preview-wrapper" style="display:none;margin-top:.75rem;text-align:center">
+                                <img id="gallery-preview" src="" alt="Vista previa"
+                                     style="max-width:100%;max-height:200px;border-radius:.5rem;border:1px solid var(--border-color)">
+                                <button type="button" class="btn-secondary" style="margin-top:.5rem;font-size:.75rem"
+                                        onclick="document.getElementById('gallery-file-input').value='';document.getElementById('gallery-preview-wrapper').style.display='none';document.getElementById('gallery-drop-area').style.display='flex'">
+                                    Quitar imagen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- URL mode -->
+                    <div id="gallery-mode-url" style="display:none">
+                        <div class="form-group">
+                            <label for="gallery-img-url">URL de la imagen *</label>
+                            <input type="url" id="gallery-img-url" placeholder="https://ejemplo.com/imagen.jpg" style="font-size:.85rem">
+                            <p style="font-size:.75rem;color:var(--text-muted);margin-top:.25rem">Pega el enlace directo a una imagen pública (Imgur, Drive, etc.).</p>
+                        </div>
+                        <div id="gallery-url-preview-wrapper" style="display:none;margin-top:.5rem;text-align:center">
+                            <img id="gallery-url-preview" src="" alt="Vista previa"
+                                 style="max-width:100%;max-height:200px;border-radius:.5rem;border:1px solid var(--border-color)">
+                        </div>
+                    </div>
+
+                    <span id="gallery-upload-status" style="font-size:.8rem;color:var(--text-muted);display:block;margin:.75rem 0 .25rem"></span>
                     <button type="submit" class="btn-primary btn-full" id="gallery-upload-btn">
                         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                         <span>Subir a la Galería</span>

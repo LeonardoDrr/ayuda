@@ -119,56 +119,56 @@ const STATIC_GALLERY = [
         id: "g1",
         title: "Listado de Pacientes — Hospital Miguel Pérez Carreño",
         desc: "Lista transcrita de personas heridas ingresadas en La Yaguara, trasladadas desde La Guaira.",
-        image: "imagenes/pacientes_perez_carreno.jpg",
+        image: "https://placehold.co/800x600/0f172a/94a3b8?text=Listado+Pacientes%0AH.+P%C3%A9rez+Carre%C3%B1o",
         date: "25 de junio de 2026"
     },
     {
         id: "g2",
         title: "Restablecimiento del Contacto Familiar — Cruz Roja",
         desc: "Comunicado oficial con el número de contacto para ubicar familiares incomunicados. Número: 0422-7994880.",
-        image: "imagenes/cruz_roja_contacto.jpg",
+        image: "https://placehold.co/800x600/0f172a/ef4444?text=Cruz+Roja+Venezolana%0AContacto%3A+0422-7994880",
         date: "24 de junio de 2026"
     },
     {
         id: "g3",
         title: "Solicitud de Apoyo Psicológico — Psicólogos Carabobo",
         desc: "Folleto con código QR para solicitar primeros auxilios psicológicos y contención emocional gratuita.",
-        image: "imagenes/psicologia_carabobo.jpg",
+        image: "https://placehold.co/800x600/0f172a/818cf8?text=Apoyo+Psicol%C3%B3gico%0APsic%C3%B3logos+Carabobo",
         date: "25 de junio de 2026"
     },
     {
         id: "g4",
         title: "Atención Psicológica Niñez — Cecodap & Unicef",
         desc: "Canales de soporte telefónico gratuito para niños y adolescentes con ansiedad, duelo o riesgo suicida.",
-        image: "imagenes/cecodap_ninos.jpg",
+        image: "https://placehold.co/800x600/0f172a/34d399?text=Cecodap+%26+Unicef%0ANi%C3%B1ez+y+Adolescencia",
         date: "24 de junio de 2026"
     },
     {
         id: "g5",
         title: "Comunicado Situación — Bomberos de Maracaibo",
         desc: "Comunicado institucional: completa calma en Maracaibo, equipos desplegados. Contacto 24h: 0414-1479760.",
-        image: "imagenes/bomberos_maracaibo.jpg",
+        image: "https://placehold.co/800x600/0f172a/f59e0b?text=Bomberos+de+Maracaibo%0A0414-1479760",
         date: "24 de junio de 2026"
     },
     {
         id: "g6",
         title: "Centro de Acopio Valencia — El Viñedo",
         desc: "Av. Monseñor Adams, Ed. Talislandia Mezzanina. Se recibe agua, alimentos, insumos médicos y ropa.",
-        image: "imagenes/acopio_valencia.jpg",
+        image: "https://placehold.co/800x600/0f172a/60a5fa?text=Centro+de+Acopio%0AValencia+El+Vi%C3%B1edo",
         date: "24 de junio de 2026"
     },
     {
         id: "g7",
         title: "Centros de Acopio Municipios Carabobo",
         desc: "Puntos activos en Miranda, Bejuma, Montalbán, San Diego, Carlos Arvelo y Diego Ibarra.",
-        image: "imagenes/acopio_carabobo.jpg",
+        image: "https://placehold.co/800x600/0f172a/60a5fa?text=Acopio+Carabobo%0AMirandas+y+Municipios",
         date: "24 de junio de 2026"
     },
     {
         id: "g8",
         title: "Llamadas y SMS Gratuitos — Comunicado Digitel",
         desc: "48 horas de llamadas y mensajes sin costo en zonas afectadas. Aplica a clientes Digitel.",
-        image: "imagenes/comunicado_digitel.jpg",
+        image: "https://placehold.co/800x600/0f172a/a78bfa?text=Digitel%0ASMS+y+Llamadas+Gratis+48h",
         date: "24 de junio de 2026"
     }
 ];
@@ -291,8 +291,26 @@ let currentPatientSearch = "";
 /**
  * Upload a File object to Cloudinary using an UNSIGNED upload preset.
  * No server or API secret needed — safe for static/public sites.
+ * 
+ * IMPORTANT: You must create a FREE Cloudinary account and configure an
+ * UNSIGNED upload preset. Then enter your Cloud Name and Preset via the
+ * "Configurar Cloudinary" button in the footer.
  */
 async function uploadToCloudinary(file, folder = "venezuela_ayuda") {
+    // Validate config before attempting upload
+    if (!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME === "dz0zmxkbu") {
+        throw new Error(
+            'Cloudinary no está configurado. Haz clic en "Configurar Cloudinary" en el footer ' +
+            'e ingresa tu Cloud Name y un Upload Preset sin firma (Unsigned).'
+        );
+    }
+    if (!CLOUDINARY_UPLOAD_PRESET || CLOUDINARY_UPLOAD_PRESET === "ml_default") {
+        throw new Error(
+            'El preset "ml_default" no está habilitado para subidas sin firma. ' +
+            'Crea un preset Unsigned en cloudinary.com/console/settings/upload y guárdalo en Configurar Cloudinary.'
+        );
+    }
+
     const formData = new FormData();
     formData.append("file",           file);
     formData.append("upload_preset",  CLOUDINARY_UPLOAD_PRESET);
@@ -303,7 +321,14 @@ async function uploadToCloudinary(file, folder = "venezuela_ayuda") {
     const data = await res.json();
 
     if (!res.ok || data.error) {
-        throw new Error(data.error?.message || "Error al subir la imagen a Cloudinary");
+        const msg = data.error?.message || "Error al subir la imagen";
+        if (res.status === 401) {
+            throw new Error(
+                `Error de autorización (401): El preset "${CLOUDINARY_UPLOAD_PRESET}" puede no ser Unsigned. ` +
+                'Ve a cloudinary.com/console/settings/upload, crea un preset de tipo "Unsigned" y actualiza la configuración.'
+            );
+        }
+        throw new Error(msg);
     }
     return data.secure_url;
 }
@@ -620,6 +645,43 @@ function setupEventListeners() {
     const galleryPreviewWrap = document.getElementById("gallery-preview-wrapper");
     const galleryDropArea    = document.getElementById("gallery-drop-area");
     const galleryStatus      = document.getElementById("gallery-upload-status");
+    let galleryCurrentTab    = "file"; // track active tab
+
+    // Gallery tab switching (file vs URL) — exposed globally for inline onclick
+    window.switchGalleryTab = function(tab) {
+        galleryCurrentTab = tab;
+        const modeFile = document.getElementById("gallery-mode-file");
+        const modeUrl  = document.getElementById("gallery-mode-url");
+        const tabFile  = document.getElementById("gallery-tab-file");
+        const tabUrl   = document.getElementById("gallery-tab-url");
+        if (tab === "file") {
+            modeFile.style.display = "block";
+            modeUrl.style.display  = "none";
+            tabFile.style.borderBottom = "2px solid var(--color-people)";
+            tabUrl.style.borderBottom  = "none";
+        } else {
+            modeFile.style.display = "none";
+            modeUrl.style.display  = "block";
+            tabFile.style.borderBottom = "none";
+            tabUrl.style.borderBottom  = "2px solid var(--color-people)";
+        }
+    };
+
+    // URL input preview
+    const galleryImgUrlInput = document.getElementById("gallery-img-url");
+    const galleryUrlPreviewWrap = document.getElementById("gallery-url-preview-wrapper");
+    const galleryUrlPreview  = document.getElementById("gallery-url-preview");
+    if (galleryImgUrlInput) {
+        galleryImgUrlInput.addEventListener("input", function() {
+            const url = this.value.trim();
+            if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
+                galleryUrlPreview.src = url;
+                galleryUrlPreviewWrap.style.display = "block";
+            } else {
+                galleryUrlPreviewWrap.style.display = "none";
+            }
+        });
+    }
 
     function closeGalleryModal() {
         galleryUploadModal.classList.remove("open");
@@ -628,6 +690,9 @@ function setupEventListeners() {
         if (galleryPreviewWrap) galleryPreviewWrap.style.display = "none";
         if (galleryDropArea)    galleryDropArea.style.display = "flex";
         if (galleryStatus)      galleryStatus.textContent = "";
+        if (galleryUrlPreviewWrap) galleryUrlPreviewWrap.style.display = "none";
+        // Reset to file tab
+        window.switchGalleryTab("file");
     }
 
     const settingsModal = document.getElementById("settings-modal");
@@ -870,9 +935,44 @@ function setupEventListeners() {
         const submitBtn = document.getElementById("gallery-upload-btn");
         const title     = document.getElementById("gallery-img-title").value.trim();
         const file      = galleryFileInput?.files[0];
+        const directUrl = (document.getElementById("gallery-img-url")?.value || "").trim();
 
+        // URL mode — use URL directly, no Cloudinary needed
+        if (galleryCurrentTab === "url") {
+            if (!directUrl) {
+                showToast("Por favor pega una URL de imagen", "error");
+                return;
+            }
+            if (!title) {
+                showToast("Por favor escribe un título", "error");
+                return;
+            }
+            submitBtn.disabled = true;
+            submitBtn.querySelector("span").textContent = "Guardando...";
+            const galleryItem = {
+                title,
+                desc: "",
+                image: directUrl,
+                date: new Date().toLocaleDateString("es-VE", { year:"numeric", month:"long", day:"numeric" })
+            };
+            const newGalleryRef = db.ref("gallery").push();
+            try {
+                await newGalleryRef.set(galleryItem);
+                trackMyUpload(newGalleryRef.key, "gallery");
+                showToast("Imagen agregada a la galería correctamente");
+                closeGalleryModal();
+            } catch(err) {
+                showToast("Error al guardar: " + err.message, "error");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.querySelector("span").textContent = "Subir a la Galería";
+            }
+            return;
+        }
+
+        // File mode — requires Cloudinary configured
         if (!file) {
-            showToast("Por favor selecciona una imagen", "error");
+            showToast("Por favor selecciona una imagen o cambia al modo URL", "error");
             return;
         }
 
@@ -897,7 +997,7 @@ function setupEventListeners() {
             closeGalleryModal();
         } catch (err) {
             if (galleryStatus) { galleryStatus.textContent = "Error: " + err.message; galleryStatus.style.color = "#ef4444"; }
-            showToast("Error al subir la imagen: " + err.message, "error");
+            showToast("Error: " + err.message, "error");
         } finally {
             submitBtn.disabled = false;
             submitBtn.querySelector("span").textContent = "Subir a la Galería";
