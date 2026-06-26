@@ -28,237 +28,18 @@ const db = firebase.database();
 // ──────────────────────────────────────────────────────────────
 // 1. STATIC RESOURCES DATABASE
 // ──────────────────────────────────────────────────────────────
-const OFFICIAL_RESOURCES = [
-    {
-        id: "r1",
-        title: "Venezuela Te Busca",
-        category: "people",
-        desc: "Plataforma ciudadana y colaborativa creada a raíz del sismo del 24 de junio de 2026. Centraliza información sobre personas desaparecidas para facilitar el reencuentro de familiares.",
-        url: "https://venezuelatebusca.com/",
-        location: "Nacional",
-        tags: ["Busqueda", "Ciudadano", "Colaborativo"],
-        image: ""
-    },
-    {
-        id: "r2",
-        title: "Desaparecidos Terremoto Venezuela",
-        category: "people",
-        desc: "Directorio web abierto e independiente para registrar reportes de personas incomunicadas y facilitar información de contacto sobre personas rescatadas.",
-        url: "https://desaparecidosterremotovenezuela.com",
-        location: "Nacional",
-        tags: ["Busqueda", "Ciudadano", "Registro"],
-        image: ""
-    },
-    {
-        id: "r3",
-        title: "FUNVISIS — Reportes Sísmicos Oficiales",
-        category: "news",
-        desc: "Fundación Venezolana de Investigaciones Sismológicas. Monitoreo constante de réplicas, epicentros, intensidades y boletines científicos oficiales en tiempo real.",
-        url: "https://www.funvisis.gob.ve",
-        location: "Nacional",
-        tags: ["Oficial", "Sismologia", "Alertas"],
-        image: ""
-    },
-    {
-        id: "r4",
-        title: "Digitel — Llamadas y SMS Gratuitos",
-        category: "news",
-        desc: "Llamadas y mensajería de texto (SMS) sin costo durante 48 horas tras el sismo. Aplica para clientes en Caracas, La Guaira, Morón, Valencia, San Diego, Maracay, San Felipe y Barquisimeto.",
-        url: "https://www.digitel.com.ve",
-        location: "Zonas Afectadas",
-        tags: ["Digitel", "Gratuito", "Comunicado"],
-        image: ""
-    },
-    {
-        id: "r5",
-        title: "Centros de Acopio Carabobo — Todos Con Vzla",
-        category: "donations",
-        desc: "Puntos activos de recolección en Valencia (El Viñedo - Ed. Talislandia Mezzanina), Miranda (Galpón Los Pinto), Bejuma (Av. Los Fundadores), Montalbán (Casa de la Cultura) y San Diego (Iglesia La Esmeralda). Se recibe agua, alimentos, insumos médicos y ropa.",
-        url: "https://www.instagram.com/todosconvzla",
-        location: "Carabobo",
-        tags: ["Acopio", "Donacion", "Carabobo"],
-        image: ""
-    },
-    {
-        id: "r6",
-        title: "Cruz Roja Venezolana — Contacto Familiar (RCF)",
-        category: "people",
-        desc: "Servicio de Restablecimiento del Contacto entre Familiares. Si perdiste comunicación con algún familiar, contacta al 0422-7994880. Operado por la Sociedad Venezolana de la Cruz Roja.",
-        url: "https://www.cruzroja.org.ve",
-        location: "Nacional",
-        tags: ["CruzRoja", "Familiar", "Oficial"],
-        image: ""
-    },
-    {
-        id: "r7",
-        title: "Primeros Auxilios Psicológicos — Psicólogos Sin Fronteras",
-        category: "health",
-        desc: "Línea de atención telefónica gratuita. Soporte y contención emocional para víctimas del sismo. Horario: lunes a viernes, 8:30 AM a 9:00 PM. Contacto: 0412-7225080.",
-        url: "tel:04127225080",
-        location: "Nacional",
-        tags: ["Salud Mental", "Gratis", "Soporte"],
-        image: ""
-    },
-    {
-        id: "r8",
-        title: "Cecodap — Atención a Niñez y Adolescencia",
-        category: "health",
-        desc: "Canales de atención psicológica priorizados para niños y jóvenes afectados por el sismo. Atiende ansiedad, duelo, terrores nocturnos y riesgo suicida. WhatsApp: +58424-2842359 / +58414-2696823. Correo: cecodap.sap@gmail.com",
-        url: "https://www.cecodap.org.ve",
-        location: "Nacional",
-        tags: ["Ninos", "Adolescentes", "Gratis"],
-        image: ""
-    }
-];
+const OFFICIAL_RESOURCES = [];
 
 // ──────────────────────────────────────────────────────────────
 // 2. STATIC FLYER GALLERY
 // ──────────────────────────────────────────────────────────────
-const STATIC_GALLERY = [
-    {
-        id: "g1",
-        title: "Listado de Pacientes — Hospital Miguel Pérez Carreño",
-        desc: "Lista transcrita de personas heridas ingresadas en La Yaguara, trasladadas desde La Guaira.",
-        image: "https://placehold.co/800x600/0f172a/94a3b8?text=Listado+Pacientes%0AH.+P%C3%A9rez+Carre%C3%B1o",
-        date: "25 de junio de 2026"
-    },
-    {
-        id: "g2",
-        title: "Restablecimiento del Contacto Familiar — Cruz Roja",
-        desc: "Comunicado oficial con el número de contacto para ubicar familiares incomunicados. Número: 0422-7994880.",
-        image: "https://placehold.co/800x600/0f172a/ef4444?text=Cruz+Roja+Venezolana%0AContacto%3A+0422-7994880",
-        date: "24 de junio de 2026"
-    },
-    {
-        id: "g3",
-        title: "Solicitud de Apoyo Psicológico — Psicólogos Carabobo",
-        desc: "Folleto con código QR para solicitar primeros auxilios psicológicos y contención emocional gratuita.",
-        image: "https://placehold.co/800x600/0f172a/818cf8?text=Apoyo+Psicol%C3%B3gico%0APsic%C3%B3logos+Carabobo",
-        date: "25 de junio de 2026"
-    },
-    {
-        id: "g4",
-        title: "Atención Psicológica Niñez — Cecodap & Unicef",
-        desc: "Canales de soporte telefónico gratuito para niños y adolescentes con ansiedad, duelo o riesgo suicida.",
-        image: "https://placehold.co/800x600/0f172a/34d399?text=Cecodap+%26+Unicef%0ANi%C3%B1ez+y+Adolescencia",
-        date: "24 de junio de 2026"
-    },
-    {
-        id: "g5",
-        title: "Comunicado Situación — Bomberos de Maracaibo",
-        desc: "Comunicado institucional: completa calma en Maracaibo, equipos desplegados. Contacto 24h: 0414-1479760.",
-        image: "https://placehold.co/800x600/0f172a/f59e0b?text=Bomberos+de+Maracaibo%0A0414-1479760",
-        date: "24 de junio de 2026"
-    },
-    {
-        id: "g6",
-        title: "Centro de Acopio Valencia — El Viñedo",
-        desc: "Av. Monseñor Adams, Ed. Talislandia Mezzanina. Se recibe agua, alimentos, insumos médicos y ropa.",
-        image: "https://placehold.co/800x600/0f172a/60a5fa?text=Centro+de+Acopio%0AValencia+El+Vi%C3%B1edo",
-        date: "24 de junio de 2026"
-    },
-    {
-        id: "g7",
-        title: "Centros de Acopio Municipios Carabobo",
-        desc: "Puntos activos en Miranda, Bejuma, Montalbán, San Diego, Carlos Arvelo y Diego Ibarra.",
-        image: "https://placehold.co/800x600/0f172a/60a5fa?text=Acopio+Carabobo%0AMirandas+y+Municipios",
-        date: "24 de junio de 2026"
-    },
-    {
-        id: "g8",
-        title: "Llamadas y SMS Gratuitos — Comunicado Digitel",
-        desc: "48 horas de llamadas y mensajes sin costo en zonas afectadas. Aplica a clientes Digitel.",
-        image: "https://placehold.co/800x600/0f172a/a78bfa?text=Digitel%0ASMS+y+Llamadas+Gratis+48h",
-        date: "24 de junio de 2026"
-    }
-];
+const STATIC_GALLERY = [];
 
 // ──────────────────────────────────────────────────────────────
 // 3. PATIENTS DATABASE (Transcribed from Hospital communiqué)
 // ──────────────────────────────────────────────────────────────
-const PATIENTS = [
-    { name: "Adriana Vastidas",    id: "17.856.045", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Alejandra Soja",      id: "6.904.629",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Alexandra Cárdenas",  id: "28.143.770", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Alvaro Ortiz",        id: "4.163.469",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Amilcar Stabilitto",  id: "23.241.059", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Ana Aguilera",        id: "20.003.134", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Ana Dias",            id: "10.576.803", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Ana Fernandez",       id: "25.699.054", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Anabela Morillo",     id: "34.588.981", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Angel Fernandez",     id: "16.310.014", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Ariana Sandoval",     id: "34.518.879", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Ayari Castillo",      id: "26.327.913", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Barbara Quintero",    id: "13.422.890", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Candelario Novis",    id: "9.416.493",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Celiana Mijares",     id: "19.734.177", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Cenaida Paredez",     id: "6.405.488",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "César Pacheco",       id: "26.327.366", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Crisbel Granado",     id: "23.926.261", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Crisdeilis Quintero", id: "32.865.296", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Cruz Hernández",      id: "4.636.722",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Dayana Rondón",       id: "Sin cédula", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Diego Garcia",        id: "33.423.811", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Duñar Lopez",         id: "12.115.323", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Eduar Arana",         id: "Sin cédula", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Eiban Yegue",         id: "24.058.780", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Elianni Idalgo",      id: "32.976.229", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Elisabeth Chacón",    id: "27.374.286", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Elizabeth Gonzalez",  id: "17.709.218", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Emira Guerra",        id: "26.019.884", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Eric Godoy",          id: "18.749.225", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Fleici Valero",       id: "13.574.764", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Francis Medina",      id: "2.856.59 (ilegible)", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Fran Rondón",         id: "19.659.867", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Rosalinda Viera",     id: "13.717.087", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Samuel Peroza",       id: "33.020.891", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Thais Lopez",         id: "13.641.870", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Valeria Azocar",      id: "28.544.619", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Veronica Bastardo",   id: "30.170.686", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Victoria Miranda",    id: "34.054.588", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Viviana Carrizo",     id: "33.232.603", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Franley di Lopez",    id: "Sin cédula", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Gabriel Brizuela",    id: "32.781.459", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Gabriel Goncalvez",   id: "82.230.906", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Genesis Bracamonte",  id: "31.428.533", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Gonzalo León",        id: "22.916.224", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Heilimar Garcia",     id: "32.543.420", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Ibsen Iglesias",      id: "32.359.883", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Isabel Gonzales",     id: "29.701.695", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Isabel Torres",       id: "4.718.019",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Juan Salazar",        id: "27.044.236", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Judid Paredes",       id: "3.883.421",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Juver Garcia",        id: "27.377.514", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Karleidi Rivero",     id: "36.091.784", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Leonardo Becerra",    id: "34.800.366", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Lesvia Morales",      id: "5.965.096",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Lourdes Oropeza",     id: "14.312.752", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Mailin Lopez",        id: "15.541.666", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Manuel Gomez",        id: "18.814.839", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Manuela De Anzola",   id: "296.723",    facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Marcela Bernal",      id: "6.049.995",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Maria Montolla",      id: "25.025.734", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Maria Quillen",       id: "6.059.288",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Maria Zamora",        id: "27.044.236", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Meri Chavez",         id: "81.462.470", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Merido Bueno",        id: "17.158.021", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Milagro Palma",       id: "Sin cédula", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Milerbis Gonzalez",   id: "26.468.240", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Nathacha Medina",     id: "29.565.365", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Nayibi Molina",       id: "29.768.360", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Oriana Ramírez",      id: "27.606.264", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Petra Sucre",         id: "2.945.823",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Rodrigo Fernandez",   id: "Sin cédula", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Rosa Marcano",        id: "4.498.435",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Wilian Alvarez",      id: "16.125.101", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Wuilliams Martinez",  id: "19.367.804", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Yadira Cordero",      id: "12.763.837", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Yaneli Acosta",       id: "31.760.907", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Yenni Marcano",       id: "18.384.289", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Yodalis Navas",       id: "30.072.743", facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Yonny Ortuño",        id: "5.199.652",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" },
-    { name: "Zoraida Martínez",    id: "6.092.167",  facility: "Hospital Miguel Pérez Carreño", origin: "La Guaira" }
-];
+const PATIENTS = [];
+
 
 // ──────────────────────────────────────────────────────────────
 // 4. SVG CATEGORY ICONS
@@ -415,7 +196,7 @@ function renderCards(list) {
 
         const isUserResource = isMyUpload(item.id, "resource");
         const deleteBtnHTML = isUserResource
-            ? `<button class="resource-delete-btn" data-id="${item.id}" title="Eliminar enlace" onclick="deleteResourceItem('${item.id}',event)">
+            ? `<button class="resource-delete-btn" data-id="${item.id}" title="Eliminar enlace">
                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14H6L5 6"></path><path d="M9 6V4h6v2"></path></svg>
                </button>`
             : "";
@@ -462,6 +243,15 @@ function renderCards(list) {
                     </button>
                 </div>
             </div>`;
+
+        // Handle delete button click in card event listener
+        card.addEventListener("click", (e) => {
+            const deleteBtn = e.target.closest(".resource-delete-btn");
+            if (deleteBtn) {
+                deleteResourceItem(item.id, e);
+            }
+        });
+
         grid.appendChild(card);
     });
 
@@ -502,21 +292,21 @@ function renderGallery(items) {
         const isUserItem = isMyUpload(item.id, "gallery");
 
         const deleteBtn = isUserItem
-            ? `<button class="gallery-delete-btn" data-id="${item.id}" title="Eliminar imagen" onclick="deleteGalleryItem('${item.id}',event)">
+            ? `<button class="gallery-delete-btn" data-id="${item.id}" title="Eliminar imagen">
                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4h6v2"></path></svg>
                </button>`
             : "";
 
         // Action buttons row
         const visitBtnHTML = item.url
-            ? `<a href="${escapeHTML(item.url)}" target="_blank" rel="noopener noreferrer" class="gallery-visit-btn" onclick="event.stopPropagation()">
+            ? `<a href="${escapeHTML(item.url)}" target="_blank" rel="noopener noreferrer" class="gallery-visit-btn">
                    <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                    Visitar enlace
                </a>`
             : "";
 
         const editBtnHTML = isUserItem
-            ? `<button class="gallery-edit-btn" onclick="openGalleryEditModal(${JSON.stringify(item)}, event)">
+            ? `<button class="gallery-edit-btn">
                    <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                    Editar
                </button>`
@@ -539,10 +329,23 @@ function renderGallery(items) {
                 <span class="gallery-card-meta">${escapeHTML(item.date || "")}</span>
                 ${actionsRowHTML}
             </div>`;
+
         card.addEventListener("click", (e) => {
-            if (e.target.closest(".gallery-delete-btn")) return;
-            if (e.target.closest(".gallery-edit-btn")) return;
-            if (e.target.closest(".gallery-visit-btn")) return;
+            const deleteBtnEl = e.target.closest(".gallery-delete-btn");
+            const editBtnEl = e.target.closest(".gallery-edit-btn");
+            const visitBtnEl = e.target.closest(".gallery-visit-btn");
+            if (deleteBtnEl) {
+                deleteGalleryItem(item.id, e);
+                return;
+            }
+            if (editBtnEl) {
+                openGalleryEditModal(item, e);
+                return;
+            }
+            if (visitBtnEl) {
+                e.stopPropagation();
+                return;
+            }
             openLightbox(item.image, item.title);
         });
         grid.appendChild(card);
