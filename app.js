@@ -6,8 +6,24 @@
 // only to generate a SHA-1 signature client-side via Web Crypto).
 // ============================================================
 
-const CLOUDINARY_CLOUD_NAME   = "dz0zmxkbu";
-const CLOUDINARY_UPLOAD_PRESET = "ml_default"; // unsigned preset — no secret needed
+let CLOUDINARY_CLOUD_NAME   = localStorage.getItem("cloudinary_cloud_name") || "dz0zmxkbu";
+let CLOUDINARY_UPLOAD_PRESET = localStorage.getItem("cloudinary_upload_preset") || "ml_default"; // unsigned preset — no secret needed
+
+// ============================================================
+// Firebase configuration & initialization
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyBuzYagg3Q8Y4aAOiTlXFpbTWZnZ6foR4Y",
+  authDomain: "click-shop-app.firebaseapp.com",
+  databaseURL: "https://click-shop-app-default-rtdb.firebaseio.com",
+  projectId: "click-shop-app",
+  storageBucket: "click-shop-app.firebasestorage.app",
+  messagingSenderId: "233795372315",
+  appId: "1:233795372315:web:9521d8ff6168eab4413fbe"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 // ──────────────────────────────────────────────────────────────
 // 1. STATIC RESOURCES DATABASE
@@ -293,45 +309,24 @@ async function uploadToCloudinary(file, folder = "venezuela_ayuda") {
 }
 
 // ──────────────────────────────────────────────────────────────
-// 7. GALLERY — Load + Save (localStorage persists uploaded items)
+// 7. FIREBASE UPLOAD TRACKING (Allows users to delete only their own posts)
 // ──────────────────────────────────────────────────────────────
-const GALLERY_STORAGE_KEY = "ve_earthquake_gallery";
-
-function loadGallery() {
+function trackMyUpload(key, type) {
     try {
-        const stored = JSON.parse(localStorage.getItem(GALLERY_STORAGE_KEY) || "[]");
-        // Deduplicate by id in case of double-save
-        const allItems = [...stored, ...STATIC_GALLERY];
-        const seen = new Set();
-        return allItems.filter(item => {
-            if (seen.has(item.id)) return false;
-            seen.add(item.id);
-            return true;
-        });
-    } catch {
-        return [...STATIC_GALLERY];
-    }
+        const storageKey = type === "resource" ? "ve_my_resources" : "ve_my_gallery";
+        const list = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        list.push(key);
+        localStorage.setItem(storageKey, JSON.stringify(list));
+    } catch (e) { /* ignore */ }
 }
 
-function saveGalleryItem(item) {
+function isMyUpload(key, type) {
     try {
-        const stored = JSON.parse(localStorage.getItem(GALLERY_STORAGE_KEY) || "[]");
-        stored.unshift(item);
-        localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(stored));
-    } catch { /* storage full – ignore */ }
-}
-
-// ──────────────────────────────────────────────────────────────
-// 8. RESOURCES — Load + Save (localStorage)
-// ──────────────────────────────────────────────────────────────
-const RESOURCES_STORAGE_KEY = "ve_earthquake_resources";
-
-function loadResources() {
-    try {
-        const stored = JSON.parse(localStorage.getItem(RESOURCES_STORAGE_KEY) || "[]");
-        resources = [...stored, ...OFFICIAL_RESOURCES];
-    } catch {
-        resources = [...OFFICIAL_RESOURCES];
+        const storageKey = type === "resource" ? "ve_my_resources" : "ve_my_gallery";
+        const list = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        return list.includes(key);
+    } catch (e) {
+        return false;
     }
 }
 
@@ -367,6 +362,11 @@ function escapeHTML(str) {
         ({ "&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;" }[t] || t));
 }
 
+function removeAccents(str) {
+    if (!str) return "";
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 // ──────────────────────────────────────────────────────────────
 // 11. RENDER: RESOURCE CARDS (Links tab)
 // ──────────────────────────────────────────────────────────────
@@ -391,6 +391,13 @@ function renderCards(list) {
         const card = document.createElement("article");
         card.className = `resource-card card-cat-${item.category}`;
 
+        const isUserResource = isMyUpload(item.id, "resource");
+        const deleteBtnHTML = isUserResource
+            ? `<button class="resource-delete-btn" data-id="${item.id}" title="Eliminar enlace" onclick="deleteResourceItem('${item.id}',event)">
+                   <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14H6L5 6"></path><path d="M9 6V4h6v2"></path></svg>
+               </button>`
+            : "";
+
         const tagsHTML = item.tags.map(t =>
             `<span class="badge" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text-secondary);font-size:.65rem">${t}</span>`
         ).join(" ");
@@ -412,6 +419,7 @@ function renderCards(list) {
 
         card.innerHTML = `
             ${mediaHTML}
+            ${deleteBtnHTML}
             <div class="card-badges">
                 <span class="badge badge-${item.category}">${CATEGORY_NAMES[item.category]}</span>
             </div>
@@ -420,7 +428,7 @@ function renderCards(list) {
                 ${escapeHTML(item.location)}</span>` : ""}
             <div class="card-body">
                 <h3 class="card-title">${escapeHTML(item.title)}</h3>
-                <p class="card-desc">${escapeHTML(item.desc)}</p>
+                ${item.desc ? `<p class="card-desc">${escapeHTML(item.desc)}</p>` : ""}
                 <div style="margin-bottom:1.25rem;display:flex;flex-wrap:wrap;gap:.25rem">${tagsHTML}</div>
                 <div class="card-actions">
                     <a href="${escapeHTML(item.url)}" target="_blank" rel="noopener noreferrer" class="btn-open-link">
@@ -459,9 +467,6 @@ function renderGallery(items) {
     if (!grid) return;
     grid.innerHTML = "";
 
-    const userUploaded = JSON.parse(localStorage.getItem(GALLERY_STORAGE_KEY) || "[]");
-    const userIds = new Set(userUploaded.map(i => i.id));
-
     if (!items.length) {
         grid.innerHTML = `<p style="color:var(--text-muted);text-align:center;padding:3rem 1rem;grid-column:1/-1">No hay imágenes en la galería.</p>`;
         return;
@@ -472,7 +477,7 @@ function renderGallery(items) {
         card.className = "gallery-card";
         card.dataset.id = item.id;
 
-        const isUserItem = userIds.has(item.id);
+        const isUserItem = isMyUpload(item.id, "gallery");
         const deleteBtn = isUserItem
             ? `<button class="gallery-delete-btn" data-id="${item.id}" title="Eliminar imagen" onclick="deleteGalleryItem('${item.id}',event)">
                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4h6v2"></path></svg>
@@ -501,14 +506,26 @@ function renderGallery(items) {
 
 function deleteGalleryItem(id, e) {
     e.stopPropagation();
-    if (!confirm("\u00bfEliminar esta imagen de la galería?")) return;
-    try {
-        let stored = JSON.parse(localStorage.getItem(GALLERY_STORAGE_KEY) || "[]");
-        stored = stored.filter(i => i.id !== id);
-        localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(stored));
-        renderGallery(loadGallery());
-        showToast("Imagen eliminada de la galería");
-    } catch { /* ignore */ }
+    if (!confirm("¿Eliminar esta imagen de la galería?")) return;
+    db.ref("gallery/" + id).remove()
+        .then(() => {
+            showToast("Imagen eliminada de la galería");
+        })
+        .catch(err => {
+            showToast("Error al eliminar imagen: " + err.message, "error");
+        });
+}
+
+function deleteResourceItem(id, e) {
+    e.stopPropagation();
+    if (!confirm("¿Eliminar este enlace del directorio?")) return;
+    db.ref("resources/" + id).remove()
+        .then(() => {
+            showToast("Enlace eliminado del directorio");
+        })
+        .catch(err => {
+            showToast("Error al eliminar enlace: " + err.message, "error");
+        });
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -558,21 +575,23 @@ function renderPatients(list) {
 // 15. FILTER FUNCTIONS
 // ──────────────────────────────────────────────────────────────
 function filterItems() {
-    const q = currentSearch.toLowerCase();
+    const q = removeAccents(currentSearch.toLowerCase());
     const filtered = resources.filter(item => {
         const catOk = currentCategory === "all" || item.category === currentCategory;
-        const txtOk = !q || [item.title, item.desc, item.location, ...item.tags].some(f => f?.toLowerCase().includes(q));
+        const txtOk = !q || [item.title, item.desc, item.location, ...item.tags].some(f => 
+            f && removeAccents(f.toLowerCase()).includes(q)
+        );
         return catOk && txtOk;
     });
     renderCards(filtered);
 }
 
 function filterPatients() {
-    const q = currentPatientSearch.toLowerCase().replace(/\./g, "");
+    const q = removeAccents(currentPatientSearch.toLowerCase().replace(/\./g, ""));
     const filtered = PATIENTS.filter(p =>
-        p.name.toLowerCase().includes(q) ||
-        p.id.replace(/\./g, "").includes(q) ||
-        p.origin.toLowerCase().includes(q)
+        removeAccents(p.name.toLowerCase()).includes(q) ||
+        removeAccents(p.id.replace(/\./g, "").toLowerCase()).includes(q) ||
+        removeAccents(p.origin.toLowerCase()).includes(q)
     );
     renderPatients(filtered);
 }
@@ -581,6 +600,47 @@ function filterPatients() {
 // 16. MAIN EVENT SETUP
 // ──────────────────────────────────────────────────────────────
 function setupEventListeners() {
+
+    // ── Helper modal close functions ──
+    const imgPreviewWrap = document.getElementById("img-preview-wrapper");
+    const uploadDropArea = document.getElementById("upload-drop-area");
+    const uploadStatus   = document.getElementById("upload-status");
+
+    function closeSuggestModal() {
+        const modal = document.getElementById("suggest-modal");
+        modal.classList.remove("open");
+        document.body.style.overflow = "";
+        document.getElementById("suggest-form").reset();
+        if (imgPreviewWrap) imgPreviewWrap.style.display = "none";
+        if (uploadDropArea) uploadDropArea.style.display = "flex";
+        if (uploadStatus)   uploadStatus.textContent = "";
+    }
+
+    const galleryUploadModal = document.getElementById("gallery-upload-modal");
+    const galleryPreviewWrap = document.getElementById("gallery-preview-wrapper");
+    const galleryDropArea    = document.getElementById("gallery-drop-area");
+    const galleryStatus      = document.getElementById("gallery-upload-status");
+
+    function closeGalleryModal() {
+        galleryUploadModal.classList.remove("open");
+        document.body.style.overflow = "";
+        document.getElementById("gallery-upload-form").reset();
+        if (galleryPreviewWrap) galleryPreviewWrap.style.display = "none";
+        if (galleryDropArea)    galleryDropArea.style.display = "flex";
+        if (galleryStatus)      galleryStatus.textContent = "";
+    }
+
+    const settingsModal = document.getElementById("settings-modal");
+    const settingsForm  = document.getElementById("settings-form");
+    const cloudNameInput   = document.getElementById("settings-cloud-name");
+    const uploadPresetInput = document.getElementById("settings-upload-preset");
+
+    function closeSettingsModal() {
+        if (settingsModal) {
+            settingsModal.classList.remove("open");
+            document.body.style.overflow = "";
+        }
+    }
 
     // ── Navigation tabs ──
     document.querySelectorAll(".nav-tab").forEach(tab => {
@@ -596,12 +656,13 @@ function setupEventListeners() {
     document.addEventListener("keydown", function(e) {
         if (e.key !== "Escape") return;
         if (document.getElementById("suggest-modal").classList.contains("open")) {
-            document.getElementById("suggest-modal").classList.remove("open");
-            document.body.style.overflow = "";
+            closeSuggestModal();
         }
         if (document.getElementById("gallery-upload-modal").classList.contains("open")) {
-            document.getElementById("gallery-upload-modal").classList.remove("open");
-            document.body.style.overflow = "";
+            closeGalleryModal();
+        }
+        if (document.getElementById("settings-modal")?.classList.contains("open")) {
+            closeSettingsModal();
         }
         if (document.getElementById("lightbox-modal").classList.contains("open")) {
             closeLightbox();
@@ -664,25 +725,23 @@ function setupEventListeners() {
 
     // ── Open suggest / add link modal ──
     document.getElementById("open-suggest-modal").addEventListener("click", () => {
+        document.getElementById("suggest-form").reset();
+        if (imgPreviewWrap) imgPreviewWrap.style.display = "none";
+        if (uploadDropArea) uploadDropArea.style.display = "flex";
+        if (uploadStatus)   uploadStatus.textContent = "";
         document.getElementById("suggest-modal").classList.add("open");
         document.body.style.overflow = "hidden";
     });
 
     // ── Close suggest modal ──
-    document.getElementById("close-modal").addEventListener("click", () => {
-        document.getElementById("suggest-modal").classList.remove("open");
-        document.body.style.overflow = "";
-    });
+    document.getElementById("close-modal").addEventListener("click", closeSuggestModal);
     document.getElementById("suggest-modal").addEventListener("click", function(e) {
-        if (e.target === this) { this.classList.remove("open"); document.body.style.overflow = ""; }
+        if (e.target === this) closeSuggestModal();
     });
 
     // ── Image preview in the suggest modal ──
     const imgFileInput  = document.getElementById("link-image-file");
     const imgPreview    = document.getElementById("img-preview");
-    const imgPreviewWrap= document.getElementById("img-preview-wrapper");
-    const uploadDropArea= document.getElementById("upload-drop-area");
-    const uploadStatus  = document.getElementById("upload-status");
 
     if (imgFileInput) {
         imgFileInput.addEventListener("change", function() {
@@ -737,57 +796,54 @@ function setupEventListeners() {
         const tags = [location, CATEGORY_NAMES[category].split(" ")[0]];
         if (title.toLowerCase().includes("cruz")) tags.push("CruzRoja");
 
-        // Save as link resource
-        const newResource = { id: Date.now().toString(), title, category, desc, url, location, tags, image: imageUrl };
-        const stored = JSON.parse(localStorage.getItem(RESOURCES_STORAGE_KEY) || "[]");
-        stored.unshift(newResource);
-        localStorage.setItem(RESOURCES_STORAGE_KEY, JSON.stringify(stored));
+        submitBtn.disabled = true;
+        submitBtn.querySelector("span").textContent = "Guardando...";
 
-        // Optionally also save in gallery
-        if (addToGallery && imageUrl) {
-            const galleryItem = {
-                id: "u" + Date.now(),
-                title,
-                desc,
-                image: imageUrl,
-                date: new Date().toLocaleDateString("es-VE", { year:"numeric", month:"long", day:"numeric" })
-            };
-            saveGalleryItem(galleryItem);
-            renderGallery(loadGallery());
-        }
+        const newResource = { title, category, desc, url, location, tags, image: imageUrl };
+        const newRef = db.ref("resources").push();
+        newRef.set(newResource)
+            .then(() => {
+                trackMyUpload(newRef.key, "resource");
+                showToast("Enlace agregado correctamente");
 
-        loadResources();
-        filterItems();
-
-        showToast("Enlace agregado correctamente");
-
-        document.getElementById("suggest-modal").classList.remove("open");
-        document.body.style.overflow = "";
-        this.reset();
-        if (imgPreviewWrap) imgPreviewWrap.style.display = "none";
-        if (uploadDropArea) uploadDropArea.style.display = "flex";
-        if (uploadStatus)   uploadStatus.textContent = "";
-        submitBtn.disabled = false;
-        submitBtn.querySelector("span").textContent = "Agregar Enlace";
+                // Optionally also save in gallery
+                if (addToGallery && imageUrl) {
+                    const galleryItem = {
+                        title,
+                        desc,
+                        image: imageUrl,
+                        date: new Date().toLocaleDateString("es-VE", { year:"numeric", month:"long", day:"numeric" })
+                    };
+                    const newGalleryRef = db.ref("gallery").push();
+                    newGalleryRef.set(galleryItem)
+                        .then(() => {
+                            trackMyUpload(newGalleryRef.key, "gallery");
+                        });
+                }
+                closeSuggestModal();
+            })
+            .catch(err => {
+                showToast("Error al guardar en base de datos: " + err.message, "error");
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.querySelector("span").textContent = "Agregar Enlace";
+            });
     });
 
     // ── Gallery upload modal ──
-    const galleryUploadModal = document.getElementById("gallery-upload-modal");
     const galleryFileInput   = document.getElementById("gallery-file-input");
     const galleryPreview     = document.getElementById("gallery-preview");
-    const galleryPreviewWrap = document.getElementById("gallery-preview-wrapper");
-    const galleryDropArea    = document.getElementById("gallery-drop-area");
-    const galleryStatus      = document.getElementById("gallery-upload-status");
 
     document.getElementById("open-gallery-upload").addEventListener("click", () => {
+        document.getElementById("gallery-upload-form").reset();
+        if (galleryPreviewWrap) galleryPreviewWrap.style.display = "none";
+        if (galleryDropArea)    galleryDropArea.style.display = "flex";
+        if (galleryStatus)      galleryStatus.textContent = "";
         galleryUploadModal.classList.add("open");
         document.body.style.overflow = "hidden";
     });
 
-    function closeGalleryModal() {
-        galleryUploadModal.classList.remove("open");
-        document.body.style.overflow = "";
-    }
     document.getElementById("close-gallery-modal").addEventListener("click", closeGalleryModal);
     galleryUploadModal.addEventListener("click", function(e) {
         if (e.target === this) closeGalleryModal();
@@ -829,20 +885,16 @@ function setupEventListeners() {
             if (galleryStatus) { galleryStatus.textContent = "Imagen subida correctamente."; galleryStatus.style.color = "#34d399"; }
 
             const galleryItem = {
-                id: "u" + Date.now(),
                 title,
                 desc: "",
                 image: imageUrl,
                 date: new Date().toLocaleDateString("es-VE", { year:"numeric", month:"long", day:"numeric" })
             };
-            saveGalleryItem(galleryItem);
-            renderGallery(loadGallery());
+            const newGalleryRef = db.ref("gallery").push();
+            await newGalleryRef.set(galleryItem);
+            trackMyUpload(newGalleryRef.key, "gallery");
             showToast("Imagen agregada a la galería correctamente");
             closeGalleryModal();
-            this.reset();
-            if (galleryPreviewWrap) galleryPreviewWrap.style.display = "none";
-            if (galleryDropArea)    galleryDropArea.style.display = "flex";
-            if (galleryStatus)      galleryStatus.textContent = "";
         } catch (err) {
             if (galleryStatus) { galleryStatus.textContent = "Error: " + err.message; galleryStatus.style.color = "#ef4444"; }
             showToast("Error al subir la imagen: " + err.message, "error");
@@ -851,15 +903,79 @@ function setupEventListeners() {
             submitBtn.querySelector("span").textContent = "Subir a la Galería";
         }
     });
+
+    // ── Settings modal ──
+    document.getElementById("open-settings-btn")?.addEventListener("click", () => {
+        if (cloudNameInput) cloudNameInput.value = CLOUDINARY_CLOUD_NAME;
+        if (uploadPresetInput) uploadPresetInput.value = CLOUDINARY_UPLOAD_PRESET;
+        if (settingsModal) {
+            settingsModal.classList.add("open");
+            document.body.style.overflow = "hidden";
+        }
+    });
+
+    document.getElementById("close-settings-modal")?.addEventListener("click", closeSettingsModal);
+    settingsModal?.addEventListener("click", function(e) {
+        if (e.target === this) closeSettingsModal();
+    });
+
+    settingsForm?.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const newCloudName = cloudNameInput.value.trim();
+        const newPreset = uploadPresetInput.value.trim();
+
+        if (!newCloudName || !newPreset) {
+            showToast("Por favor, rellena todos los campos", "error");
+            return;
+        }
+
+        CLOUDINARY_CLOUD_NAME = newCloudName;
+        CLOUDINARY_UPLOAD_PRESET = newPreset;
+        localStorage.setItem("cloudinary_cloud_name", newCloudName);
+        localStorage.setItem("cloudinary_upload_preset", newPreset);
+
+        showToast("Configuración guardada correctamente");
+        closeSettingsModal();
+    });
+
+    document.getElementById("btn-reset-settings")?.addEventListener("click", () => {
+        if (cloudNameInput) cloudNameInput.value = "dz0zmxkbu";
+        if (uploadPresetInput) uploadPresetInput.value = "ml_default";
+    });
 }
 
 // ──────────────────────────────────────────────────────────────
 // 17. INIT
 // ──────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", function () {
-    loadResources();
+    // Initial render with static data
+    resources = [...OFFICIAL_RESOURCES];
     renderCards(resources);
-    renderGallery(loadGallery());
+    renderGallery(STATIC_GALLERY);
     renderPatients(PATIENTS);
+
+    // Setup Firebase listeners
+    db.ref("resources").on("value", snapshot => {
+        const firebaseResources = [];
+        snapshot.forEach(childSnapshot => {
+            const item = childSnapshot.val();
+            item.id = childSnapshot.key;
+            firebaseResources.push(item);
+        });
+        resources = [...firebaseResources, ...OFFICIAL_RESOURCES];
+        filterItems();
+    });
+
+    db.ref("gallery").on("value", snapshot => {
+        const firebaseGallery = [];
+        snapshot.forEach(childSnapshot => {
+            const item = childSnapshot.val();
+            item.id = childSnapshot.key;
+            firebaseGallery.push(item);
+        });
+        const allGalleryItems = [...firebaseGallery, ...STATIC_GALLERY];
+        renderGallery(allGalleryItems);
+    });
+
     setupEventListeners();
 });

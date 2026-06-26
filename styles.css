@@ -1381,8 +1381,8 @@ textarea:focus {
     background: rgba(99, 102, 241, .05);
 }
 
-/* 17. Gallery delete button (user-uploaded images only) */
-.gallery-delete-btn {
+/* 17. Gallery & Resource delete buttons (user-uploaded items only) */
+.gallery-delete-btn, .resource-delete-btn {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
@@ -1402,11 +1402,12 @@ textarea:focus {
     backdrop-filter: blur(4px);
 }
 
-.gallery-card:hover .gallery-delete-btn {
+.gallery-card:hover .gallery-delete-btn,
+.resource-card:hover .resource-delete-btn {
     opacity: 1;
 }
 
-.gallery-delete-btn:hover {
+.gallery-delete-btn:hover, .resource-delete-btn:hover {
     background: #dc2626;
     transform: scale(1.1);
 }
