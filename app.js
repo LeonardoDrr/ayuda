@@ -7,7 +7,7 @@
 // ============================================================
 
 let CLOUDINARY_CLOUD_NAME   = localStorage.getItem("cloudinary_cloud_name") || "dndiosy4u";
-let CLOUDINARY_UPLOAD_PRESET = localStorage.getItem("cloudinary_upload_preset") || "ml_default"; // unsigned preset — must be configured as Unsigned in Cloudinary dashboard
+let CLOUDINARY_UPLOAD_PRESET = localStorage.getItem("cloudinary_upload_preset") || "venezuela_ayuda"; // unsigned preset
 
 // ============================================================
 // Firebase configuration & initialization
@@ -1037,7 +1037,7 @@ function setupEventListeners() {
 
     document.getElementById("btn-reset-settings")?.addEventListener("click", () => {
         if (cloudNameInput) cloudNameInput.value = "dndiosy4u";
-        if (uploadPresetInput) uploadPresetInput.value = "ml_default";
+        if (uploadPresetInput) uploadPresetInput.value = "venezuela_ayuda";
     });
 }
 
