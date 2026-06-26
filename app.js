@@ -6,8 +6,8 @@
 // only to generate a SHA-1 signature client-side via Web Crypto).
 // ============================================================
 
-let CLOUDINARY_CLOUD_NAME   = localStorage.getItem("cloudinary_cloud_name") || "dz0zmxkbu";
-let CLOUDINARY_UPLOAD_PRESET = localStorage.getItem("cloudinary_upload_preset") || "ml_default"; // unsigned preset — no secret needed
+let CLOUDINARY_CLOUD_NAME   = localStorage.getItem("cloudinary_cloud_name") || "dndiosy4u";
+let CLOUDINARY_UPLOAD_PRESET = localStorage.getItem("cloudinary_upload_preset") || "ml_default"; // unsigned preset — must be configured as Unsigned in Cloudinary dashboard
 
 // ============================================================
 // Firebase configuration & initialization
@@ -298,17 +298,14 @@ let currentPatientSearch = "";
  */
 async function uploadToCloudinary(file, folder = "venezuela_ayuda") {
     // Validate config before attempting upload
-    if (!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME === "dz0zmxkbu") {
+    if (!CLOUDINARY_CLOUD_NAME) {
         throw new Error(
             'Cloudinary no está configurado. Haz clic en "Configurar Cloudinary" en el footer ' +
             'e ingresa tu Cloud Name y un Upload Preset sin firma (Unsigned).'
         );
     }
-    if (!CLOUDINARY_UPLOAD_PRESET || CLOUDINARY_UPLOAD_PRESET === "ml_default") {
-        throw new Error(
-            'El preset "ml_default" no está habilitado para subidas sin firma. ' +
-            'Crea un preset Unsigned en cloudinary.com/console/settings/upload y guárdalo en Configurar Cloudinary.'
-        );
+    if (!CLOUDINARY_UPLOAD_PRESET) {
+        throw new Error('Falta el Upload Preset de Cloudinary. Configúralo en el footer.');
     }
 
     const formData = new FormData();
@@ -1039,7 +1036,7 @@ function setupEventListeners() {
     });
 
     document.getElementById("btn-reset-settings")?.addEventListener("click", () => {
-        if (cloudNameInput) cloudNameInput.value = "dz0zmxkbu";
+        if (cloudNameInput) cloudNameInput.value = "dndiosy4u";
         if (uploadPresetInput) uploadPresetInput.value = "ml_default";
     });
 }
