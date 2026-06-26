@@ -35,10 +35,7 @@ const OFFICIAL_RESOURCES = [];
 // ──────────────────────────────────────────────────────────────
 const STATIC_GALLERY = [];
 
-// ──────────────────────────────────────────────────────────────
-// 3. PATIENTS DATABASE (Transcribed from Hospital communiqué)
-// ──────────────────────────────────────────────────────────────
-const PATIENTS = [];
+
 
 
 // ──────────────────────────────────────────────────────────────
@@ -63,7 +60,6 @@ const CATEGORY_NAMES = {
 let resources = [];
 let currentCategory = "all";
 let currentSearch = "";
-let currentPatientSearch = "";
 
 // ──────────────────────────────────────────────────────────────
 // 6. CLOUDINARY — SHA-1 SIGNED UPLOAD (Web Crypto API)
@@ -390,34 +386,7 @@ function closeLightbox() {
     document.body.style.overflow = "";
 }
 
-// ──────────────────────────────────────────────────────────────
-// 14. RENDER: PATIENTS TABLE
-// ──────────────────────────────────────────────────────────────
-function renderPatients(list) {
-    const tbody = document.getElementById("patients-table-body");
-    const tableWrap = document.querySelector(".table-responsive");
-    const noRes = document.getElementById("no-patients-results");
-    if (!tbody) return;
-    tbody.innerHTML = "";
 
-    if (!list.length) {
-        tableWrap.style.display = "none";
-        noRes.style.display = "flex";
-        return;
-    }
-    tableWrap.style.display = "block";
-    noRes.style.display = "none";
-
-    list.forEach(p => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td><strong>${escapeHTML(p.name)}</strong></td>
-            <td>${escapeHTML(p.id)}</td>
-            <td>${escapeHTML(p.facility)}</td>
-            <td>${escapeHTML(p.origin)}</td>`;
-        tbody.appendChild(row);
-    });
-}
 
 // ──────────────────────────────────────────────────────────────
 // 15. FILTER FUNCTIONS
@@ -434,15 +403,7 @@ function filterItems() {
     renderCards(filtered);
 }
 
-function filterPatients() {
-    const q = removeAccents(currentPatientSearch.toLowerCase().replace(/\./g, ""));
-    const filtered = PATIENTS.filter(p =>
-        removeAccents(p.name.toLowerCase()).includes(q) ||
-        removeAccents(p.id.replace(/\./g, "").toLowerCase()).includes(q) ||
-        removeAccents(p.origin.toLowerCase()).includes(q)
-    );
-    renderPatients(filtered);
-}
+
 
 // ──────────────────────────────────────────────────────────────
 // 16. MAIN EVENT SETUP
@@ -600,19 +561,7 @@ function setupEventListeners() {
         filterItems();
     });
 
-    // ── Patient search ──
-    const patInput = document.getElementById("patient-search-input");
-    const patClear = document.getElementById("clear-patient-search");
-    patInput.addEventListener("input", function() {
-        currentPatientSearch = this.value;
-        patClear.style.display = currentPatientSearch ? "flex" : "none";
-        filterPatients();
-    });
-    patClear.addEventListener("click", () => {
-        patInput.value = ""; currentPatientSearch = "";
-        patClear.style.display = "none";
-        patInput.focus(); filterPatients();
-    });
+
 
     // ── Open suggest / add link modal ──
     document.getElementById("open-suggest-modal").addEventListener("click", () => {
@@ -926,7 +875,6 @@ document.addEventListener("DOMContentLoaded", function () {
     resources = [...OFFICIAL_RESOURCES];
     renderCards(resources);
     renderGallery(STATIC_GALLERY);
-    renderPatients(PATIENTS);
 
     // Setup Firebase listeners
     db.ref("resources").on("value", snapshot => {

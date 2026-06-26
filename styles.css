@@ -1352,64 +1352,7 @@ textarea:focus {
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* 15. Patients Database Table Styles */
-.patients-search-box {
-    margin-bottom: 2rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
 
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    border-radius: 0.75rem;
-    border: 1px solid var(--border-color);
-    background-color: var(--bg-surface);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
-}
-
-.patients-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-    font-size: 0.9rem;
-}
-
-.patients-table th {
-    background-color: #020617;
-    color: var(--text-secondary);
-    font-family: var(--font-heading);
-    font-weight: 600;
-    padding: 1rem 1.25rem;
-    border-bottom: 2px solid var(--border-color);
-    letter-spacing: 0.02em;
-}
-
-.patients-table td {
-    padding: 0.9rem 1.25rem;
-    border-bottom: 1px solid rgba(51, 65, 85, 0.5);
-    color: var(--text-primary);
-    vertical-align: middle;
-}
-
-.patients-table tbody tr {
-    transition: var(--transition-fast);
-}
-
-.patients-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.patients-table tbody tr:hover td {
-    background-color: var(--bg-surface-hover);
-}
-
-.no-results#no-patients-results {
-    display: none;
-    max-width: 500px;
-}
 
 /* 16. Cloudinary Image Upload Area */
 .image-upload-box {

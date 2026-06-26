@@ -42,7 +42,6 @@
         <nav class="main-nav">
             <button class="nav-tab active" data-target="links-view">Enlaces de Ayuda</button>
             <button class="nav-tab" data-target="gallery-view">Galería de Comunicados</button>
-            <button class="nav-tab" data-target="patients-view">Pacientes Hospitalizados</button>
         </nav>
 
         <!-- 1. Enlaces de Ayuda View -->
@@ -208,47 +207,7 @@
             </div>
         </div>
 
-        <!-- 3. Pacientes Hospitalizados View -->
-        <div id="patients-view" class="view-container">
-            <div class="view-header">
-                <h2 class="view-title">Pacientes Hospitalizados</h2>
-                <p class="view-subtitle">Registro de personas lesionadas ingresadas en el Hospital Miguel Pérez Carreño (La Yaguara) trasladadas desde La Guaira tras el sismo. Escribe un nombre o cédula para verificar.</p>
-            </div>
-            
-            <div class="patients-search-box">
-                <div class="search-bar-wrapper">
-                    <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="patient-search-input" placeholder="Buscar paciente por nombre, apellido o número de cédula..." autocomplete="off">
-                    <button id="clear-patient-search" class="clear-search-btn" aria-label="Limpiar búsqueda">
-                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                </div>
-            </div>
 
-            <div class="table-responsive">
-                <table class="patients-table">
-                    <thead>
-                        <tr>
-                            <th>Nombre Completo</th>
-                            <th>Cédula de Identidad</th>
-                            <th>Ubicación / Centro de Salud</th>
-                            <th>Procedencia</th>
-                        </tr>
-                    </thead>
-                    <tbody id="patients-table-body">
-                        <!-- Injected via JS -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="no-results" id="no-patients-results">
-                <div class="no-results-icon">
-                    <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                </div>
-                <h3>No se encontraron pacientes</h3>
-                <p>Verifica si el nombre o la cédula están bien escritos. La lista se actualiza con los reportes transcritos.</p>
-            </div>
-        </div>
     </div>
 
     <!-- Suggest/Add Link Modal —  simplified -->
