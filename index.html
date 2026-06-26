@@ -211,21 +211,21 @@
         </div>
     </div>
 
-    <!-- Suggest/Add Link Modal -->
+    <!-- Suggest/Add Link Modal — with Cloudinary upload -->
     <div class="modal-overlay" id="suggest-modal">
         <div class="modal-card">
             <div class="modal-header">
-                <h2>Agregar Enlace de Ayuda</h2>
+                <h2>Agregar Recurso de Ayuda</h2>
                 <button class="close-modal-btn" id="close-modal">
                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
             <div class="modal-body">
-                <p class="modal-intro">Puedes agregar un enlace localmente en tu navegador para tener acceso rápido o para probar la visualización. Si subiste capturas de pantalla a GitHub, ingresa la URL de la imagen aquí.</p>
-                <form id="suggest-form">
+                <p class="modal-intro">Completa el formulario para agregar un nuevo enlace o comunicado de ayuda. Puedes subir una imagen directamente desde tu dispositivo — se almacena en la nube de forma automática.</p>
+                <form id="suggest-form" autocomplete="off">
                     <div class="form-group">
                         <label for="link-title">Nombre del Recurso / Sitio Web *</label>
-                        <input type="text" id="link-title" required placeholder="Ej: Registro Cruz Roja - Búsqueda de Personas">
+                        <input type="text" id="link-title" required placeholder="Ej: Lista de heridos en Hospital XYZ">
                     </div>
                     <div class="form-row">
                         <div class="form-group">
@@ -248,22 +248,55 @@
                     </div>
                     <div class="form-group">
                         <label for="link-desc">Descripción Breve *</label>
-                        <textarea id="link-desc" required rows="3" placeholder="Describe brevemente qué información ofrece este enlace y cómo ayuda a la población."></textarea>
+                        <textarea id="link-desc" required rows="3" placeholder="Describe brevemente qué información ofrece y cómo ayuda a la población."></textarea>
                     </div>
+
+                    <!-- IMAGE SECTION -->
                     <div class="form-group">
-                        <label for="link-image">URL de la Imagen (Opcional - p.ej. Enlace de GitHub)</label>
+                        <label>Imagen del Comunicado / Folleto</label>
+                        <div class="image-upload-box" id="image-upload-box">
+                            <input type="file" id="link-image-file" accept="image/*" style="display:none">
+                            <div class="upload-drop-area" id="upload-drop-area">
+                                <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);margin-bottom:.5rem"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                <p style="font-size:.85rem;color:var(--text-secondary);margin:0">Arrastra una imagen aquí o</p>
+                                <button type="button" class="btn-secondary" style="margin-top:.5rem;font-size:.8rem"
+                                        onclick="document.getElementById('link-image-file').click()">
+                                    Seleccionar archivo
+                                </button>
+                            </div>
+                            <div id="img-preview-wrapper" style="display:none;margin-top:.75rem;text-align:center">
+                                <img id="img-preview" src="" alt="Vista previa"
+                                     style="max-width:100%;max-height:200px;border-radius:.5rem;border:1px solid var(--border-color)">
+                                <button type="button" class="btn-secondary" style="margin-top:.5rem;font-size:.75rem"
+                                        onclick="document.getElementById('link-image-file').value='';document.getElementById('img-preview-wrapper').style.display='none'">
+                                    Quitar imagen
+                                </button>
+                            </div>
+                            <span id="upload-status" style="font-size:.8rem;color:var(--text-muted);display:block;margin-top:.5rem"></span>
+                        </div>
+                        <p style="font-size:.75rem;color:var(--text-muted);margin-top:.5rem">
+                            O introduce una URL de imagen externa:
+                        </p>
                         <input type="url" id="link-image" placeholder="https://raw.githubusercontent.com/.../imagen.png">
-                        <span class="input-helper">Si no provees una imagen, se asignará un diseño e icono premium por defecto según la categoría.</span>
                     </div>
-                    <button type="submit" class="btn-primary btn-full">
+
+                    <!-- Add to gallery checkbox -->
+                    <div class="form-group" style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem">
+                        <input type="checkbox" id="add-to-gallery" style="width:18px;height:18px;accent-color:#6366f1;cursor:pointer">
+                        <label for="add-to-gallery" style="margin:0;cursor:pointer;font-size:.9rem;color:var(--text-primary)">
+                            Agregar también a la Galería de Comunicados
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-full" id="submit-resource-btn">
                         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        <span>Agregar al Directorio Temporal</span>
+                        <span>Agregar Recurso</span>
                     </button>
                 </form>
 
-                <div class="modal-info-box">
-                    <h3>Instrucciones para Enlaces Permanentes</h3>
-                    <p>Los enlaces agregados aquí se guardan en tu navegador local (localStorage). Para que aparezcan de forma permanente para todos los usuarios, puedes copiar el código JSON generado al guardar y enviarlo al administrador.</p>
+                <div class="modal-info-box" style="margin-top:1.5rem">
+                    <h3>Almacenamiento de Imágenes</h3>
+                    <p>Las imágenes se suben automáticamente a Cloudinary y quedan disponibles de forma permanente en el portal para todos los usuarios.</p>
                 </div>
             </div>
         </div>
