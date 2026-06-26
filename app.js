@@ -769,10 +769,6 @@ function setupEventListeners() {
                 showToast("Por favor pega una URL de imagen", "error");
                 return;
             }
-            if (!title) {
-                showToast("Por favor escribe un título", "error");
-                return;
-            }
             submitBtn.disabled = true;
             submitBtn.querySelector("span").textContent = "Guardando...";
             const linkUrl = (document.getElementById("gallery-link-url")?.value || "").trim();
@@ -865,7 +861,6 @@ function setupEventListeners() {
         const desc  = document.getElementById("edit-gallery-desc").value.trim();
         const url   = document.getElementById("edit-gallery-link").value.trim();
 
-        if (!title) { showToast("El título es obligatorio", "error"); return; }
         if (!id)    { showToast("Error: ID de publicación no encontrado", "error"); return; }
 
         this.disabled = true;
