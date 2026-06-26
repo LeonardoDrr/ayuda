@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portal consolidado de información de emergencia y enlaces de ayuda para el terremoto de 7.5 en Venezuela (24 de junio de 2026). Encuentra familiares, reporta daños y dona.">
+    <title>Información - Emergencia Terremoto Venezuela</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Top Warning Banner -->
+    <div class="alert-banner">
+        <div class="alert-banner-content">
+            <span class="pulse-dot"></span>
+            <strong>ALERTA SÍSMICA:</strong> Sismo doblete (7.5 y 7.2 M) registrado el 24 de junio de 2026 en la zona centro-norte. Por favor, mantenga las vías de comunicación libres y use recursos oficiales.
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <span class="flag-badge">
+                    <span class="flag-yellow"></span>
+                    <span class="flag-blue"></span>
+                    <span class="flag-red"></span>
+                    VE
+                </span>
+                <h1>Información</h1>
+            </div>
+            <p class="subtitle">Directorio Centralizado de Enlaces de Ayuda y Emergencia de Venezuela</p>
+            <p class="tagline">Consolidando recursos para agilizar la búsqueda de personas, reportes oficiales y donaciones.</p>
+        </header>
+
+        <!-- Main Navigation Tabs -->
+        <nav class="main-nav">
+            <button class="nav-tab active" data-target="links-view">Enlaces de Ayuda</button>
+            <button class="nav-tab" data-target="gallery-view">Galería de Comunicados</button>
+            <button class="nav-tab" data-target="patients-view">Pacientes Hospitalizados</button>
+        </nav>
+
+        <!-- 1. Enlaces de Ayuda View -->
+        <div id="links-view" class="view-container active">
+            <!-- Emergency Numbers Speed Dial -->
+            <section class="emergency-section">
+                <div class="section-title-wrapper">
+                    <h2 class="section-title">Líneas de Emergencia Directas</h2>
+                    <span class="section-subtitle">Toca cualquier número para llamar directamente</span>
+                </div>
+                <div class="emergency-grid">
+                    <a href="tel:04141479760" class="emergency-card card-red">
+                        <div class="emergency-icon">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 9.24v7.68z"></path></svg>
+                        </div>
+                        <div class="emergency-info">
+                            <h3>0414-1479760</h3>
+                            <p>Bomberos de Maracaibo</p>
+                        </div>
+                    </a>
+                    <a href="tel:04127225080" class="emergency-card card-orange">
+                        <div class="emergency-icon">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                        </div>
+                        <div class="emergency-info">
+                            <h3>0412-7225080</h3>
+                            <p>Apoyo Psicológico Gratuito</p>
+                        </div>
+                    </a>
+                    <a href="tel:04227994880" class="emergency-card card-blue">
+                        <div class="emergency-icon">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <div class="emergency-info">
+                            <h3>0422-7994880</h3>
+                            <p>Cruz Roja RCF (Contacto)</p>
+                        </div>
+                    </a>
+                    <a href="tel:04126365015" class="emergency-card card-red-dark">
+                        <div class="emergency-icon">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 9.24v7.68z"></path></svg>
+                        </div>
+                        <div class="emergency-info">
+                            <h3>0412-6365015</h3>
+                            <p>Cruz Roja RCF (Alternativo)</p>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Search and Filter Section -->
+            <section class="controls-section">
+                <div class="search-bar-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-input" placeholder="Buscar por nombre, palabra clave, ciudad o servicio..." autocomplete="off">
+                    <button id="clear-search" class="clear-search-btn" aria-label="Limpiar búsqueda">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="filter-tabs-container">
+                    <div class="filter-tabs" id="filter-tabs">
+                        <button class="tab-btn active" data-category="all">
+                            <span>Todos</span>
+                        </button>
+                        <button class="tab-btn" data-category="people">
+                            <span class="category-indicator cat-people"></span>
+                            <span>Búsqueda de Personas</span>
+                        </button>
+                        <button class="tab-btn" data-category="news">
+                            <span class="category-indicator cat-news"></span>
+                            <span>Reportes y Noticias</span>
+                        </button>
+                        <button class="tab-btn" data-category="donations">
+                            <span class="category-indicator cat-donations"></span>
+                            <span>Donaciones y Acopio</span>
+                        </button>
+                        <button class="tab-btn" data-category="health">
+                            <span class="category-indicator cat-health"></span>
+                            <span>Salud y Refugios</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Resource Counters -->
+            <div class="results-meta">
+                <p id="results-count">Mostrando 0 recursos de ayuda</p>
+                <button id="open-suggest-modal" class="btn-suggest">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Agregar Enlace Local</span>
+                </button>
+            </div>
+
+            <!-- Resources Grid -->
+            <main class="resources-grid" id="resources-grid">
+                <div class="loader-placeholder">
+                    <div class="spinner"></div>
+                    <p>Cargando directorios de emergencia...</p>
+                </div>
+            </main>
+
+            <!-- No Results State -->
+            <div class="no-results" id="no-results">
+                <div class="no-results-icon">
+                    <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                </div>
+                <h3>No se encontraron recursos</h3>
+                <p>Intenta escribir otra palabra clave o selecciona otra categoría.</p>
+                <button id="reset-filters" class="btn-secondary">Restablecer filtros</button>
+            </div>
+        </div>
+
+        <!-- 2. Galería de Comunicados View -->
+        <div id="gallery-view" class="view-container">
+            <div class="view-header">
+                <h2 class="view-title">Galería de Comunicados e Imágenes</h2>
+                <p class="view-subtitle">Consolidado de folletos, avisos oficiales, comunicados de servicios públicos y listas físicas de heridos o refugiados. Haz clic en una imagen para ampliarla.</p>
+            </div>
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- Dynamically injected via JS -->
+            </div>
+        </div>
+
+        <!-- 3. Pacientes Hospitalizados View -->
+        <div id="patients-view" class="view-container">
+            <div class="view-header">
+                <h2 class="view-title">Pacientes Hospitalizados</h2>
+                <p class="view-subtitle">Registro de personas lesionadas ingresadas en el Hospital Miguel Pérez Carreño (La Yaguara) trasladadas desde La Guaira tras el sismo. Escribe un nombre o cédula para verificar.</p>
+            </div>
+            
+            <div class="patients-search-box">
+                <div class="search-bar-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="patient-search-input" placeholder="Buscar paciente por nombre, apellido o número de cédula..." autocomplete="off">
+                    <button id="clear-patient-search" class="clear-search-btn" aria-label="Limpiar búsqueda">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="patients-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre Completo</th>
+                            <th>Cédula de Identidad</th>
+                            <th>Ubicación / Centro de Salud</th>
+                            <th>Procedencia</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patients-table-body">
+                        <!-- Injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="no-results" id="no-patients-results">
+                <div class="no-results-icon">
+                    <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                </div>
+                <h3>No se encontraron pacientes</h3>
+                <p>Verifica si el nombre o la cédula están bien escritos. La lista se actualiza con los reportes transcritos.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suggest/Add Link Modal -->
+    <div class="modal-overlay" id="suggest-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Agregar Enlace de Ayuda</h2>
+                <button class="close-modal-btn" id="close-modal">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-intro">Puedes agregar un enlace localmente en tu navegador para tener acceso rápido o para probar la visualización. Si subiste capturas de pantalla a GitHub, ingresa la URL de la imagen aquí.</p>
+                <form id="suggest-form">
+                    <div class="form-group">
+                        <label for="link-title">Nombre del Recurso / Sitio Web *</label>
+                        <input type="text" id="link-title" required placeholder="Ej: Registro Cruz Roja - Búsqueda de Personas">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="link-category">Categoría *</label>
+                            <select id="link-category" required>
+                                <option value="people">Búsqueda de Personas</option>
+                                <option value="news">Reportes y Noticias</option>
+                                <option value="donations">Donaciones y Acopio</option>
+                                <option value="health">Salud y Refugios</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="link-location">Ubicación / Cobertura</label>
+                            <input type="text" id="link-location" placeholder="Ej: Nacional, Caracas, Yaracuy">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="link-url">Enlace (URL) *</label>
+                        <input type="url" id="link-url" required placeholder="https://example.com/ayuda">
+                    </div>
+                    <div class="form-group">
+                        <label for="link-desc">Descripción Breve *</label>
+                        <textarea id="link-desc" required rows="3" placeholder="Describe brevemente qué información ofrece este enlace y cómo ayuda a la población."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="link-image">URL de la Imagen (Opcional - p.ej. Enlace de GitHub)</label>
+                        <input type="url" id="link-image" placeholder="https://raw.githubusercontent.com/.../imagen.png">
+                        <span class="input-helper">Si no provees una imagen, se asignará un diseño e icono premium por defecto según la categoría.</span>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <span>Agregar al Directorio Temporal</span>
+                    </button>
+                </form>
+
+                <div class="modal-info-box">
+                    <h3>Instrucciones para Enlaces Permanentes</h3>
+                    <p>Los enlaces agregados aquí se guardan en tu navegador local (localStorage). Para que aparezcan de forma permanente para todos los usuarios, puedes copiar el código JSON generado al guardar y enviarlo al administrador.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal for Gallery Images -->
+    <div class="lightbox-overlay" id="lightbox-modal">
+        <div class="lightbox-content">
+            <button class="close-lightbox-btn" id="close-lightbox" aria-label="Cerrar imagen">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <img id="lightbox-img" src="" alt="Vista ampliada del comunicado">
+            <div class="lightbox-caption" id="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <p><strong>Información Terremoto Venezuela 7.5</strong></p>
+            <p class="footer-disclaimer">Este portal es un directorio independiente colaborativo. Toda la información suministrada debe ser validada. Mantén las líneas telefónicas libres y prioriza el uso de mensajes de texto en zonas de baja señal.</p>
+            <p class="footer-copy">&copy; 2026 Directorio de Ayuda Humanitaria. Diseñado para salvar vidas y agilizar la comunicación.</p>
+        </div>
+    </footer>
+
+    <!-- JS Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
