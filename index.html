@@ -353,11 +353,52 @@
                     </div>
 
                     <span id="gallery-upload-status" style="font-size:.8rem;color:var(--text-muted);display:block;margin:.75rem 0 .25rem"></span>
+
+                    <!-- Optional link -->
+                    <div class="form-group" style="margin-bottom:1rem">
+                        <label for="gallery-link-url">Enlace externo (opcional)</label>
+                        <input type="url" id="gallery-link-url" placeholder="https://... (se muestra como botón bajo la imagen)">
+                    </div>
+
                     <button type="submit" class="btn-primary btn-full" id="gallery-upload-btn">
                         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                         <span>Subir a la Galería</span>
                     </button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Edit Modal -->
+    <div class="modal-overlay" id="gallery-edit-modal">
+        <div class="modal-card" style="max-width:440px">
+            <div class="modal-header">
+                <h2>Editar Publicación</h2>
+                <button class="close-modal-btn" id="close-gallery-edit-modal">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-gallery-id">
+                <div class="form-group">
+                    <label for="edit-gallery-title">Título *</label>
+                    <input type="text" id="edit-gallery-title" required placeholder="Título de la imagen">
+                </div>
+                <div class="form-group">
+                    <label for="edit-gallery-desc">Descripción</label>
+                    <textarea id="edit-gallery-desc" rows="3" placeholder="Descripción breve (opcional)" style="resize:vertical"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-gallery-link">Enlace externo</label>
+                    <input type="url" id="edit-gallery-link" placeholder="https://... (opcional)">
+                </div>
+                <div style="display:flex;gap:.5rem;margin-top:1rem">
+                    <button type="button" class="btn-secondary" id="cancel-gallery-edit" style="flex:1">Cancelar</button>
+                    <button type="button" class="btn-primary" id="save-gallery-edit" style="flex:2">
+                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        Guardar cambios
+                    </button>
+                </div>
             </div>
         </div>
     </div>

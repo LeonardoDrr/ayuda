@@ -500,10 +500,30 @@ function renderGallery(items) {
         card.dataset.id = item.id;
 
         const isUserItem = isMyUpload(item.id, "gallery");
+
         const deleteBtn = isUserItem
             ? `<button class="gallery-delete-btn" data-id="${item.id}" title="Eliminar imagen" onclick="deleteGalleryItem('${item.id}',event)">
                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4h6v2"></path></svg>
                </button>`
+            : "";
+
+        // Action buttons row
+        const visitBtnHTML = item.url
+            ? `<a href="${escapeHTML(item.url)}" target="_blank" rel="noopener noreferrer" class="gallery-visit-btn" onclick="event.stopPropagation()">
+                   <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                   Visitar enlace
+               </a>`
+            : "";
+
+        const editBtnHTML = isUserItem
+            ? `<button class="gallery-edit-btn" onclick="openGalleryEditModal(${JSON.stringify(item)}, event)">
+                   <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                   Editar
+               </button>`
+            : "";
+
+        const actionsRowHTML = (visitBtnHTML || editBtnHTML)
+            ? `<div class="gallery-card-actions">${editBtnHTML}${visitBtnHTML}</div>`
             : "";
 
         card.innerHTML = `
@@ -517,9 +537,12 @@ function renderGallery(items) {
                 <h3 class="gallery-card-title">${escapeHTML(item.title)}</h3>
                 ${item.desc ? `<p class="gallery-card-desc">${escapeHTML(item.desc)}</p>` : ""}
                 <span class="gallery-card-meta">${escapeHTML(item.date || "")}</span>
+                ${actionsRowHTML}
             </div>`;
         card.addEventListener("click", (e) => {
             if (e.target.closest(".gallery-delete-btn")) return;
+            if (e.target.closest(".gallery-edit-btn")) return;
+            if (e.target.closest(".gallery-visit-btn")) return;
             openLightbox(item.image, item.title);
         });
         grid.appendChild(card);
@@ -725,6 +748,9 @@ function setupEventListeners() {
         }
         if (document.getElementById("settings-modal")?.classList.contains("open")) {
             closeSettingsModal();
+        }
+        if (document.getElementById("gallery-edit-modal")?.classList.contains("open")) {
+            closeGalleryEditModal();
         }
         if (document.getElementById("lightbox-modal").classList.contains("open")) {
             closeLightbox();
@@ -946,10 +972,12 @@ function setupEventListeners() {
             }
             submitBtn.disabled = true;
             submitBtn.querySelector("span").textContent = "Guardando...";
+            const linkUrl = (document.getElementById("gallery-link-url")?.value || "").trim();
             const galleryItem = {
                 title,
                 desc: "",
                 image: directUrl,
+                url: linkUrl,
                 date: new Date().toLocaleDateString("es-VE", { year:"numeric", month:"long", day:"numeric" })
             };
             const newGalleryRef = db.ref("gallery").push();
@@ -981,10 +1009,12 @@ function setupEventListeners() {
             const imageUrl = await uploadToCloudinary(file, "venezuela_ayuda_gallery");
             if (galleryStatus) { galleryStatus.textContent = "Imagen subida correctamente."; galleryStatus.style.color = "#34d399"; }
 
+            const linkUrl = (document.getElementById("gallery-link-url")?.value || "").trim();
             const galleryItem = {
                 title,
                 desc: "",
                 image: imageUrl,
+                url: linkUrl,
                 date: new Date().toLocaleDateString("es-VE", { year:"numeric", month:"long", day:"numeric" })
             };
             const newGalleryRef = db.ref("gallery").push();
@@ -998,6 +1028,55 @@ function setupEventListeners() {
         } finally {
             submitBtn.disabled = false;
             submitBtn.querySelector("span").textContent = "Subir a la Galería";
+        }
+    });
+
+    // ── Gallery Edit Modal ──
+    const galleryEditModal = document.getElementById("gallery-edit-modal");
+
+    function closeGalleryEditModal() {
+        galleryEditModal.classList.remove("open");
+        document.body.style.overflow = "";
+    }
+
+    // Exposed globally so it can be called from inline onclick in renderGallery
+    window.openGalleryEditModal = function(item, e) {
+        if (e) e.stopPropagation();
+        document.getElementById("edit-gallery-id").value    = item.id;
+        document.getElementById("edit-gallery-title").value = item.title || "";
+        document.getElementById("edit-gallery-desc").value  = item.desc  || "";
+        document.getElementById("edit-gallery-link").value  = item.url   || "";
+        galleryEditModal.classList.add("open");
+        document.body.style.overflow = "hidden";
+    };
+
+    document.getElementById("close-gallery-edit-modal")?.addEventListener("click", closeGalleryEditModal);
+    document.getElementById("cancel-gallery-edit")?.addEventListener("click", closeGalleryEditModal);
+    galleryEditModal?.addEventListener("click", function(e) {
+        if (e.target === this) closeGalleryEditModal();
+    });
+
+    document.getElementById("save-gallery-edit")?.addEventListener("click", async function() {
+        const id    = document.getElementById("edit-gallery-id").value;
+        const title = document.getElementById("edit-gallery-title").value.trim();
+        const desc  = document.getElementById("edit-gallery-desc").value.trim();
+        const url   = document.getElementById("edit-gallery-link").value.trim();
+
+        if (!title) { showToast("El título es obligatorio", "error"); return; }
+        if (!id)    { showToast("Error: ID de publicación no encontrado", "error"); return; }
+
+        this.disabled = true;
+        this.textContent = "Guardando...";
+
+        try {
+            await db.ref("gallery/" + id).update({ title, desc, url });
+            showToast("Publicación actualizada correctamente");
+            closeGalleryEditModal();
+        } catch(err) {
+            showToast("Error al guardar: " + err.message, "error");
+        } finally {
+            this.disabled = false;
+            this.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Guardar cambios`;
         }
     });
 
