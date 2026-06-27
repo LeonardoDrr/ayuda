@@ -4,7 +4,7 @@
 // Garantiza acceso sin conexión a guías y números de emergencia.
 // ============================================================
 
-const CACHE_NAME = "ve-emergencia-v1";
+const CACHE_NAME = "ve-emergencia-v2";
 const STATIC_ASSETS = [
     "/",
     "/index.html",
