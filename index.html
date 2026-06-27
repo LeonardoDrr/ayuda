@@ -14,11 +14,14 @@
 </head>
 <body>
     <!-- Top Warning Banner -->
-    <div class="alert-banner">
+    <div class="alert-banner" id="alert-banner">
         <div class="alert-banner-content">
             <span class="pulse-dot"></span>
-            <strong>ALERTA SÍSMICA:</strong> Sismo doblete (7.5 y 7.2 M) registrado el 24 de junio de 2026 en la zona centro-norte. Por favor, mantenga las vías de comunicación libres y use recursos oficiales.
+            <strong>ALERTA SÍSMICA:</strong> Sismo doblete (7.5 y 7.2 M) registrado el 24 de junio de 2026 en la zona centro-norte. Mantenga las vías de comunicación libres y use recursos oficiales.
         </div>
+        <button class="alert-close-btn" id="alert-close-btn" aria-label="Cerrar alerta">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
     </div>
 
     <!-- Main Container -->
@@ -42,6 +45,7 @@
         <nav class="main-nav">
             <button class="nav-tab active" data-target="links-view">Enlaces de Ayuda</button>
             <button class="nav-tab" data-target="gallery-view">Galería de Comunicados</button>
+            <button class="nav-tab nav-tab-emergency" data-target="guide-view">Guías de Emergencia</button>
         </nav>
 
         <!-- 1. Enlaces de Ayuda View -->
@@ -207,6 +211,182 @@
             </div>
         </div>
 
+        <!-- 3. Guías de Emergencia View -->
+        <div id="guide-view" class="view-container">
+            <div class="view-header">
+                <h2 class="view-title">Guías de Emergencia y Autoprotección</h2>
+                <p class="view-subtitle">Información clave y de carga rápida. Sigue las recomendaciones de FUNVISIS y Protección Civil ante sismos, réplicas, derrumbes y alertas de tsunami.</p>
+            </div>
+            
+            <div class="guide-grid">
+                <!-- Card 1: Sismos y Réplicas -->
+                <div class="guide-card border-sismo">
+                    <div class="guide-card-header">
+                        <span class="guide-icon icon-sismo">
+                            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                        </span>
+                        <h3>Sismos y Réplicas</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <p class="guide-intro-text">Los sismos no se pueden predecir. Las réplicas son sismos menores que ocurren después del evento principal y pueden continuar durante días.</p>
+                        
+                        <div class="timeline-step">
+                            <span class="step-badge badge-before">ANTES</span>
+                            <ul>
+                                <li><strong>Mochila de Emergencia (72h):</strong> Agua, comida enlatada, linterna, radio a pilas, botiquín y silbato.</li>
+                                <li><strong>Asegura el hogar:</strong> Fija muebles altos y pesados a la pared y retira objetos colgados sobre camas.</li>
+                                <li><strong>Rutas de escape:</strong> Identifica las salidas y zonas seguras más cercanas.</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="timeline-step">
+                            <span class="step-badge badge-during">DURANTE</span>
+                            <ul>
+                                <li><strong>Agáchate, Cúbrete y Sujétate:</strong> Refúgiate bajo una mesa resistente y sujétate de ella.</li>
+                                <li><strong>Aléjate de vidrios:</strong> Mantente lejos de ventanas, espejos y repisas con objetos sueltos.</li>
+                                <li><strong>No uses ascensores:</strong> Si debes salir, usa siempre las escaleras de emergencia.</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="timeline-step">
+                            <span class="step-badge badge-after">DESPUÉS</span>
+                            <ul>
+                                <li><strong>Corta los servicios:</strong> Cierra el gas y la electricidad para evitar incendios o explosiones.</li>
+                                <li><strong>Prepárate para réplicas:</strong> Si sientes un temblor nuevo, repite el protocolo de protección de inmediato.</li>
+                                <li><strong>Sal con cuidado:</strong> No entres a estructuras agrietadas. Mantente en zonas libres.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Alerta de Tsunami -->
+                <div class="guide-card border-tsunami">
+                    <div class="guide-card-header">
+                        <span class="guide-icon icon-tsunami">
+                            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c.5-1.5 1-2.5 2.5-2.5s2.5 1 4 2.5 2.5 2.5 4 2.5 2.5-1 4-2.5 2-1 2.5-1M2 17c.5-1.5 1-2.5 2.5-2.5s2.5 1 4 2.5 2.5 2.5 4 2.5 2.5-1 4-2.5 2-1 2.5-1M2 7c2.5 0 3.5 3 6.5 3s4-3 7-3 4 3 7 3"></path></svg>
+                        </span>
+                        <h3>Alerta de Tsunami</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <p class="guide-intro-text">Si estás en la costa, un terremoto fuerte puede originar olas gigantescas. Identifica las señales naturales y evacúa rápidamente.</p>
+                        
+                        <div class="guide-sub-section">
+                            <h4>Señales de Alerta Natural</h4>
+                            <p>No esperes alarmas formales. Evacúa inmediatamente si notas:</p>
+                            <ul>
+                                <li><strong>Sismo prolongado:</strong> Un temblor fuerte que dure más de 30 segundos en la costa.</li>
+                                <li><strong>Retiro del mar:</strong> El agua retrocede rápidamente dejando expuestos corales, peces y arena.</li>
+                                <li><strong>Rugido marino:</strong> Un ruido fuerte y continuo proveniente del mar profundo.</li>
+                            </ul>
+                        </div>
+
+                        <div class="guide-sub-section">
+                            <h4>Plan de Evacuación Costera</h4>
+                            <ul>
+                                <li><strong>Evacuación a pie:</strong> Camina rápidamente, no uses carros para no trancar las calles.</li>
+                                <li><strong>Hacia zonas altas:</strong> Sube a una altura mínima de <strong>30 metros</strong> sobre el nivel del mar o avanza <strong>2 kilómetros</strong> tierra adentro.</li>
+                                <li><strong>Mantente a salvo:</strong> Quédate en la zona alta. Las olas secundarias pueden llegar horas después de la primera.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Deslizamientos y Derrumbes -->
+                <div class="guide-card border-derrumbes">
+                    <div class="guide-card-header">
+                        <span class="guide-icon icon-derrumbes">
+                            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 22h20L12 2zM12 9v4M12 17h.01"></path></svg>
+                        </span>
+                        <h3>Derrumbes y Deslizamientos</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <p class="guide-intro-text">En terrenos inclinados, los terremotos y las lluvias intensas pueden provocar desprendimientos de tierra masivos.</p>
+                        
+                        <div class="guide-sub-section">
+                            <h4>Señales de alerta del terreno</h4>
+                            <ul>
+                                <li><strong>Grietas inusuales:</strong> Roturas repentinas en taludes, carreteras o paredes exteriores de viviendas.</li>
+                                <li><strong>Estructuras inclinadas:</strong> Postes de alumbrado, árboles o muros que comienzan a perder verticalidad.</li>
+                                <li><strong>Flujo de lodo o piedras:</strong> Caídas pequeñas y continuas de tierra o rocas por la montaña.</li>
+                            </ul>
+                        </div>
+
+                        <div class="guide-sub-section">
+                            <h4>Medidas de Supervivencia</h4>
+                            <ul>
+                                <li><strong>Evacuación lateral:</strong> Aléjate de la trayectoria directa del deslizamiento moviéndote hacia los costados estables, nunca hacia abajo.</li>
+                                <li><strong>Protección corporal:</strong> Si no logras escapar, acurrúcate y protege tu cabeza y cuello con los brazos.</li>
+                                <li><strong>Zona inestable:</strong> Aléjate del área tras el derrumbe, ya que la tierra suele quedar inestable y puede deslizarse más.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Primeros Auxilios Básicos -->
+                <div class="guide-card border-auxilios">
+                    <div class="guide-card-header">
+                        <span class="guide-icon icon-auxilios">
+                            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                        </span>
+                        <h3>Primeros Auxilios</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <p class="guide-intro-text">Pautas esenciales para brindar ayuda de emergencia antes de que lleguen los equipos médicos oficiales de rescate.</p>
+                        
+                        <div class="medical-step">
+                            <h4>Control de Hemorragias</h4>
+                            <p>Presiona firmemente la herida con un paño limpio o gasa. Si la tela se empapa, pon otra encima sin quitar la primera y mantén la presión continua.</p>
+                        </div>
+                        
+                        <div class="medical-step">
+                            <h4>Inmovilización de Fracturas</h4>
+                            <p>No intentes reacomodar el hueso. Coloca tablillas de madera o cartón rígido alrededor de la extremidad y átalas con vendas o pañuelos sin apretar demasiado.</p>
+                        </div>
+                        
+                        <div class="medical-step">
+                            <h4>Quemaduras Térmicas</h4>
+                            <p>Irriga la zona con agua limpia a temperatura ambiente durante al menos 10 minutos. No uses hielo, pasta dental ni aceites. Cubre flojamente con una tela limpia.</p>
+                        </div>
+                        
+                        <div class="medical-step">
+                            <h4>RCP de Emergencia (Solo Manos)</h4>
+                            <p>Si la víctima no respira ni responde, coloca tus manos en el centro de su pecho y realiza compresiones rápidas y profundas (100-120 por minuto) a un ritmo constante.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Comunicación y Rumores -->
+                <div class="guide-card border-telecom">
+                    <div class="guide-card-header">
+                        <span class="guide-icon icon-telecom">
+                            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        </span>
+                        <h3>Uso de Redes y Rumores</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <p class="guide-intro-text">Una comunicación responsable evita el colapso de las antenas celulares y previene la histeria colectiva.</p>
+                        
+                        <div class="guide-sub-section">
+                            <h4>Redes y Comunicaciones</h4>
+                            <ul>
+                                <li><strong>SMS y Texto:</strong> Usa mensajes cortos de texto en lugar de llamadas de voz o videos. Ocupan menos señal y logran enviarse en redes congestionadas.</li>
+                                <li><strong>Llamadas cortas:</strong> Si debes llamar, sé breve (ej: "Estoy bien en la plaza Bolívar, fin").</li>
+                                <li><strong>Ahorro de batería:</strong> Pon el teléfono en modo avión si no tienes señal para que la búsqueda de red no agote tu batería.</li>
+                            </ul>
+                        </div>
+
+                        <div class="guide-sub-section">
+                            <h4>Verificación y Control de Rumores</h4>
+                            <ul>
+                                <li><strong>Los sismos NO se predicen:</strong> Desconfía de cadenas que indiquen horas exactas de réplicas. Es científicamente imposible saber cuándo temblará.</li>
+                                <li><strong>Cuentas oficiales:</strong> No difundas audios alarmistas de origen dudoso. Consulta y comparte información verificada de **FUNVISIS** o **Protección Civil**.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
     </div>
 
@@ -304,10 +484,10 @@
                     <!-- Toggle tabs: File vs URL -->
                     <div style="display:flex;gap:.5rem;margin-bottom:1rem">
                         <button type="button" id="gallery-tab-file" class="btn-secondary" style="flex:1;font-size:.8rem;border-bottom:2px solid var(--color-people)" onclick="switchGalleryTab('file')">
-                            📷 Subir archivo
+                            Subir archivo
                         </button>
                         <button type="button" id="gallery-tab-url" class="btn-secondary" style="flex:1;font-size:.8rem" onclick="switchGalleryTab('url')">
-                            🔗 Pegar URL
+                            Pegar URL
                         </button>
                     </div>
 
@@ -396,36 +576,7 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div class="modal-overlay" id="settings-modal">
-        <div class="modal-card" style="max-width:400px">
-            <div class="modal-header">
-                <h2>Configurar Cloudinary</h2>
-                <button class="close-modal-btn" id="close-settings-modal">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="settings-form" autocomplete="off">
-                    <div class="form-group">
-                        <label for="settings-cloud-name">Cloud Name *</label>
-                        <input type="text" id="settings-cloud-name" required placeholder="Ej: dz0zmxkbu">
-                    </div>
-                    <div class="form-group">
-                        <label for="settings-upload-preset">Upload Preset (Unsigned) *</label>
-                        <input type="text" id="settings-upload-preset" required placeholder="Ej: ml_default">
-                        <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem">
-                            Asegúrate de que el preset esté configurado como <strong>Unsigned</strong> (sin firma) en tu panel de Cloudinary.
-                        </p>
-                    </div>
-                    <div style="display:flex;gap:0.5rem;margin-top:1.5rem">
-                        <button type="button" class="btn-secondary" id="btn-reset-settings" style="flex:1">Restablecer</button>
-                        <button type="submit" class="btn-primary" style="flex:2">Guardar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <!-- Settings Modal removed: Cloudinary credentials are managed server-side -->
 
     <!-- Lightbox Modal for Gallery Images -->
     <div class="lightbox-overlay" id="lightbox-modal">
@@ -445,14 +596,8 @@
     <footer class="app-footer">
         <div class="footer-content">
             <p><strong>Información Terremoto Venezuela 7.5</strong></p>
-            <p class="footer-disclaimer">Este portal es un directorio independiente colaborativo. Toda la información suministrada debe ser validada. Mantén las líneas telefónicas libres y prioriza el uso de mensajes de texto en zonas de baja señal.</p>
-            <div style="margin: 1rem 0; display: flex; justify-content: center; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                <button id="open-settings-btn" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; display: inline-flex; align-items: center; gap: 0.4rem; border-color: rgba(255, 255, 255, 0.1);">
-                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    <span>Configurar Cloudinary</span>
-                </button>
-            </div>
-            <p class="footer-copy">&copy; 2026 Directorio de Ayuda Humanitaria. Diseñado para salvar vidas y agilizar la comunicación.</p>
+            <p class="footer-disclaimer">Portal independiente y colaborativo. Toda información debe ser validada con fuentes oficiales. Prioriza el uso de mensajes de texto en zonas de baja señal.</p>
+            <p class="footer-copy">&copy; 2026 Directorio de Ayuda Humanitaria &mdash; FUNVISIS: 0800-TEMBLOR &bull; Emergencias: 911</p>
         </div>
     </footer>
 
@@ -462,5 +607,29 @@
 
     <!-- JS Application Script -->
     <script src="app.js"></script>
+
+    <!-- Alert Banner: close button + 10s auto-dismiss -->
+    <script>
+        (function () {
+            var banner = document.getElementById('alert-banner');
+            var closeBtn = document.getElementById('alert-close-btn');
+            function dismissBanner() {
+                if (!banner) return;
+                banner.classList.add('fade-out');
+                setTimeout(function () { banner.style.display = 'none'; }, 600);
+            }
+            if (closeBtn) closeBtn.addEventListener('click', dismissBanner);
+            setTimeout(dismissBanner, 10000);
+        })();
+    </script>
+
+    <!-- Service Worker Registration (Offline Support) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            });
+        }
+    </script>
 </body>
 </html>

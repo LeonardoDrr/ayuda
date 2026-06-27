@@ -75,24 +75,60 @@ body {
 .alert-banner {
     background: linear-gradient(90deg, #7f1d1d 0%, #991b1b 50%, #7f1d1d 100%);
     border-bottom: 1px solid #b91c1c;
-    padding: 0.75rem 1rem;
+    padding: 0.6rem 1rem;
     color: #fee2e2;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     position: sticky;
     top: 0;
     z-index: 100;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.6s ease, max-height 0.5s ease, padding 0.4s ease;
+    overflow: hidden;
+    max-height: 100px;
+}
+
+.alert-banner.fade-out {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-bottom-width: 0;
 }
 
 .alert-banner-content {
-    max-width: 1200px;
+    flex: 1;
+    max-width: 1160px;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.65rem;
     text-align: center;
 }
+
+.alert-close-btn {
+    background: none;
+    border: none;
+    color: #fca5a5;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s ease, color 0.2s ease;
+    margin-left: auto;
+}
+
+.alert-close-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
 
 .pulse-dot {
     width: 10px;
@@ -1425,4 +1461,294 @@ textarea:focus {
 @media (max-width: 400px) {
     .emergency-grid { grid-template-columns: 1fr; }
     .resources-grid { grid-template-columns: 1fr; }
+}
+
+/* 19. Emergency Guides Section Styles */
+.nav-tab-emergency {
+    color: #fbbf24;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.nav-tab-emergency::after {
+    background-color: #fbbf24 !important;
+}
+
+.nav-tab-emergency.active {
+    color: #f59e0b;
+}
+
+.guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .guide-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+}
+
+.guide-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 1.25rem 1.25rem 1.25rem 1.625rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
+    position: relative;
+    overflow: hidden;
+}
+
+.guide-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.guide-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 24px -5px rgba(0,0,0,.3);
+}
+
+.border-sismo::before   { background-color: var(--color-people); }
+.border-sismo:hover     { border-color: rgba(248,113,113,.35); }
+.border-tsunami::before { background-color: var(--color-health); }
+.border-tsunami:hover   { border-color: rgba(56,189,248,.35); }
+.border-derrumbes::before { background-color: var(--accent-orange); }
+.border-derrumbes:hover   { border-color: rgba(249,115,22,.35); }
+.border-auxilios::before  { background-color: var(--color-donations); }
+.border-auxilios:hover    { border-color: rgba(52,211,153,.35); }
+.border-telecom::before   { background-color: var(--color-news); }
+.border-telecom:hover     { border-color: rgba(192,132,252,.35); }
+
+.guide-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    padding-bottom: 0.75rem;
+}
+
+.guide-card-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.guide-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 0.5rem;
+    flex-shrink: 0;
+}
+
+.icon-sismo    { background-color: var(--color-people-bg);  color: var(--color-people); }
+.icon-tsunami  { background-color: var(--color-health-bg);  color: var(--color-health); }
+.icon-derrumbes{ background-color: rgba(249,115,22,.1);      color: var(--accent-orange); }
+.icon-auxilios { background-color: var(--color-donations-bg);color: var(--color-donations); }
+.icon-telecom  { background-color: var(--color-news-bg);     color: var(--color-news); }
+
+.guide-intro-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin: 0;
+}
+
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding-left: 1rem;
+    border-left: 2px solid rgba(255,255,255,.07);
+}
+
+.step-badge {
+    align-self: flex-start;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.18rem 0.5rem;
+    border-radius: 0.25rem;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.15rem;
+}
+
+.badge-before { background-color: #1d4ed8; color: #fff; }
+.badge-during { background-color: #b91c1c; color: #fff; }
+.badge-after  { background-color: #047857; color: #fff; }
+
+.guide-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.guide-card-body ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0;
+    margin: 0;
+}
+
+.guide-card-body li {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    position: relative;
+    padding-left: 1rem;
+    line-height: 1.45;
+}
+
+.guide-card-body li::before {
+    content: 'â€º';
+    color: var(--text-muted);
+    position: absolute;
+    left: 0;
+    font-weight: 700;
+}
+
+.guide-sub-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.guide-sub-section h4 {
+    font-family: var(--font-heading);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.guide-sub-section p {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin: 0;
+}
+
+.medical-step {
+    padding: 0.7rem 0.875rem;
+    background-color: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 0.5rem;
+}
+
+.medical-step h4 {
+    font-family: var(--font-heading);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.medical-step p {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin: 0;
+}
+
+/* 20. Extra responsiveness â€” very narrow screens (320px+) */
+@media (max-width: 360px) {
+    .container { padding: 0 1rem; }
+    .app-header { padding-top: 1.25rem; }
+    .brand h1  { font-size: 1.75rem; }
+    .subtitle  { font-size: 0.8rem; }
+    .tagline   { font-size: 0.75rem; }
+    .nav-tab   { font-size: 0.78rem; padding: 0.55rem 0.5rem; }
+    .emergency-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .emergency-card { padding: 0.75rem 0.5rem; gap: 0.5rem; }
+    .emergency-icon { width: 32px; height: 32px; }
+    .emergency-info h3 { font-size: 0.9rem; }
+    .guide-card { padding: 1rem 1rem 1rem 1.25rem; }
+    .guide-card-header h3 { font-size: 1rem; }
+    .guide-intro-text,
+    .guide-card-body li,
+    .medical-step p,
+    .guide-sub-section p { font-size: 0.82rem; }
+    .filter-tabs { flex-wrap: wrap; gap: 0.35rem; }
+    .tab-btn { font-size: 0.75rem; padding: 0.45rem 0.6rem; }
+}
+
+/* 21. Print styles â€” guÃ­as limpias en papel */
+@media print {
+    /* Ocultar todo lo no esencial */
+    .alert-banner,
+    .main-nav,
+    .controls-section,
+    .results-meta,
+    .emergency-section,
+    #links-view,
+    #gallery-view,
+    .app-footer,
+    .toast-container,
+    .modal-overlay,
+    .lightbox-overlay { display: none !important; }
+
+    /* Mostrar solo las guÃ­as */
+    #guide-view { display: block !important; }
+
+    /* Fondo y color para impresiÃ³n en papel */
+    body {
+        background: #fff !important;
+        color: #111 !important;
+        font-size: 11pt;
+    }
+
+    .view-title   { font-size: 16pt; color: #000; margin-bottom: 0.5rem; }
+    .view-subtitle { font-size: 9pt; color: #444; }
+
+    .guide-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .guide-card {
+        background: #fff !important;
+        border: 1.5px solid #333 !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+        padding: 0.75rem 0.75rem 0.75rem 1rem;
+    }
+
+    .guide-card::before { background-color: #333 !important; }
+
+    .guide-card-header { border-bottom-color: #ccc; }
+    .guide-card-header h3 { font-size: 11pt; color: #000; }
+    .guide-icon { display: none; }
+
+    .guide-intro-text,
+    .guide-card-body li,
+    .medical-step p,
+    .guide-sub-section p { color: #333 !important; font-size: 9pt; }
+
+    .guide-sub-section h4,
+    .medical-step h4 { color: #000 !important; font-size: 9pt; }
+
+    .step-badge { border: 1px solid #333; background: #fff !important; color: #000 !important; }
+    .medical-step { border-color: #bbb; background: #f9f9f9 !important; }
 }

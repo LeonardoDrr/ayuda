@@ -1,13 +1,6 @@
-// ============================================================
-// Venezuela Earthquake Emergency Portal — app.js
-// ============================================================
-// Cloudinary credentials (unsigned upload preset is the safest
-// approach for a public static site; the API secret is used here
-// only to generate a SHA-1 signature client-side via Web Crypto).
-// ============================================================
-
-let CLOUDINARY_CLOUD_NAME   = localStorage.getItem("cloudinary_cloud_name") || "dndiosy4u";
-let CLOUDINARY_UPLOAD_PRESET = localStorage.getItem("cloudinary_upload_preset") || "venezuela_ayuda"; // unsigned preset
+// Cloudinary credentials — fixed, no user configuration needed.
+const CLOUDINARY_CLOUD_NAME    = "dndiosy4u";
+const CLOUDINARY_UPLOAD_PRESET = "venezuela_ayuda";
 
 // ============================================================
 // Firebase configuration & initialization
@@ -479,17 +472,7 @@ function setupEventListeners() {
         window.switchGalleryTab("file");
     }
 
-    const settingsModal = document.getElementById("settings-modal");
-    const settingsForm  = document.getElementById("settings-form");
-    const cloudNameInput   = document.getElementById("settings-cloud-name");
-    const uploadPresetInput = document.getElementById("settings-upload-preset");
-
-    function closeSettingsModal() {
-        if (settingsModal) {
-            settingsModal.classList.remove("open");
-            document.body.style.overflow = "";
-        }
-    }
+    const settingsModal = null; // Settings modal removed
 
     // ── Navigation tabs ──
     document.querySelectorAll(".nav-tab").forEach(tab => {
@@ -509,9 +492,6 @@ function setupEventListeners() {
         }
         if (document.getElementById("gallery-upload-modal").classList.contains("open")) {
             closeGalleryModal();
-        }
-        if (document.getElementById("settings-modal")?.classList.contains("open")) {
-            closeSettingsModal();
         }
         if (document.getElementById("gallery-edit-modal")?.classList.contains("open")) {
             closeGalleryEditModal();
@@ -827,44 +807,7 @@ function setupEventListeners() {
         }
     });
 
-    // ── Settings modal ──
-    document.getElementById("open-settings-btn")?.addEventListener("click", () => {
-        if (cloudNameInput) cloudNameInput.value = CLOUDINARY_CLOUD_NAME;
-        if (uploadPresetInput) uploadPresetInput.value = CLOUDINARY_UPLOAD_PRESET;
-        if (settingsModal) {
-            settingsModal.classList.add("open");
-            document.body.style.overflow = "hidden";
-        }
-    });
-
-    document.getElementById("close-settings-modal")?.addEventListener("click", closeSettingsModal);
-    settingsModal?.addEventListener("click", function(e) {
-        if (e.target === this) closeSettingsModal();
-    });
-
-    settingsForm?.addEventListener("submit", function(e) {
-        e.preventDefault();
-        const newCloudName = cloudNameInput.value.trim();
-        const newPreset = uploadPresetInput.value.trim();
-
-        if (!newCloudName || !newPreset) {
-            showToast("Por favor, rellena todos los campos", "error");
-            return;
-        }
-
-        CLOUDINARY_CLOUD_NAME = newCloudName;
-        CLOUDINARY_UPLOAD_PRESET = newPreset;
-        localStorage.setItem("cloudinary_cloud_name", newCloudName);
-        localStorage.setItem("cloudinary_upload_preset", newPreset);
-
-        showToast("Configuración guardada correctamente");
-        closeSettingsModal();
-    });
-
-    document.getElementById("btn-reset-settings")?.addEventListener("click", () => {
-        if (cloudNameInput) cloudNameInput.value = "dndiosy4u";
-        if (uploadPresetInput) uploadPresetInput.value = "venezuela_ayuda";
-    });
+    // Settings modal removed — credentials are fixed constants in source.
 }
 
 // ──────────────────────────────────────────────────────────────
